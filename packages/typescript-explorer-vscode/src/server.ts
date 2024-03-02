@@ -21,15 +21,20 @@ async function getQuickInfoAtPosition(
     fileName: string,
     position: vscode.Position
 ) {
-    if (fileName.endsWith(".vue.ts") || fileName.endsWith(".vue.js"))
-        return Promise.resolve(undefined)
     return await vscode.commands
         .executeCommand(
             "typescript.tsserverRequest",
             "quickinfo-full",
             toFileLocationRequestArgs(fileName, position)
         )
-        .then((r) => (r as ts.server.protocol.QuickInfoResponse).body)
+        .then(
+            (r) => (r as ts.server.protocol.QuickInfoResponse).body,
+            (e) => {
+                if (!fileName.endsWith(".vue")) {
+                    throw e
+                }
+            }
+        )
 }
 
 async function customTypescriptRequest<Id extends CustomTypeScriptRequestId>(
@@ -37,8 +42,6 @@ async function customTypescriptRequest<Id extends CustomTypeScriptRequestId>(
     position: vscode.Position,
     request: CustomTypeScriptRequestOfId<Id>
 ): Promise<CustomTypeScriptResponseBody<Id> | undefined> {
-    if (fileName.endsWith(".vue.ts") || fileName.endsWith(".vue.js"))
-        return Promise.resolve(undefined)
     return await vscode.commands
         .executeCommand("typescript.tsserverRequest", "completionInfo", {
             ...toFileLocationRequestArgs(fileName, position),
