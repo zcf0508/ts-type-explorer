@@ -218,7 +218,7 @@ export function createType(ctx: TypescriptContext, flags: ts.TypeFlags) {
 export function createObjectType(
     ctx: TypescriptContext,
     objectFlags: ts.ObjectFlags,
-    flags: ts.TypeFlags = 0
+    flags: ts.TypeFlags = 2
 ): ObjectTypeInternal {
     const type = createType(
         ctx,
@@ -240,7 +240,7 @@ export function createObjectType(
 export function createUnionType(
     ctx: TypescriptContext,
     types: ts.Type[] = [],
-    flags: ts.TypeFlags = 0
+    flags: ts.TypeFlags = 2
 ): UnionTypeInternal {
     const type = createType(
         ctx,
@@ -258,7 +258,7 @@ export function createUnionType(
 export function createIntersectionType(
     ctx: TypescriptContext,
     types: ts.Type[] = [],
-    flags: ts.TypeFlags = 0
+    flags: ts.TypeFlags = 2
 ): IntersectionTypeInternal {
     const type = createType(
         ctx,
@@ -669,6 +669,8 @@ function getLeftHandSideExpression(node: ts.CallLikeExpression) {
         return node.tag
     } else if ("tagName" in node) {
         return node.tagName
+    } else if ("left" in node) {
+        return node.left
     } else {
         return node.expression
     }

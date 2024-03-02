@@ -435,8 +435,8 @@ function _generateTypeTree(
                         types: parseTypes(getTypeArguments(tsCtx, type)!),
                         names: (
                             type.target as ts.TupleType
-                        ).labeledElementDeclarations?.map((s) =>
-                            s.name.getText()
+                        ).labeledElementDeclarations?.map(
+                            (s) => s?.name.getText() || ""
                         ),
                         ...(isReadonly && { readonly: true }),
                     }
@@ -559,8 +559,8 @@ function _generateTypeTree(
                 return {
                     kind: "substitution",
                     baseType: parseType((type as ts.SubstitutionType).baseType),
-                    substitute: parseType(
-                        (type as ts.SubstitutionType).substitute
+                    constraint: parseType(
+                        (type as ts.SubstitutionType).constraint
                     ),
                 }
             } else if (flags & ts.TypeFlags.NonPrimitive) {
@@ -909,7 +909,7 @@ export function getTypeInfoChildren(info: TypeInfo): TypeInfo[] {
             }
 
             case "substitution": {
-                return [info.baseType, info.substitute]
+                return [info.baseType, info.constraint]
             }
 
             case "template_literal": {
