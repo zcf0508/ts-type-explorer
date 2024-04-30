@@ -10,6 +10,7 @@ import {
     TypeInfo,
 } from "@ts-type-explorer/api"
 import {
+    getDurationAlert,
     positionFromLineAndCharacter,
     rangeFromLineAndCharacters,
     rangeToTextRange,
@@ -35,6 +36,13 @@ async function customTypescriptRequest<Id extends CustomTypeScriptRequestId>(
     position: vscode.Position,
     request: CustomTypeScriptRequestOfId<Id>
 ): Promise<CustomTypeScriptResponseBody<Id> | undefined> {
+    const { register, abort } = getDurationAlert(
+        "TSServer needs more time to respond, please wait a few seconds",
+        3000
+    )
+
+    register()
+
     return await vscode.commands
         .executeCommand("typescript.tsserverRequest", "completionInfo", {
             ...toFileLocationRequestArgs(fileName, position),
@@ -45,6 +53,7 @@ async function customTypescriptRequest<Id extends CustomTypeScriptRequestId>(
             triggerCharacter: request,
         })
         .then((val) => {
+            abort()
             if (!val) return undefined
 
             const response = val as CustomTypeScriptResponse
