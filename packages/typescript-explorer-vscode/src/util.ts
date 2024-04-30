@@ -93,3 +93,20 @@ export function isDocumentSupported({ languageId }: vscode.TextDocument) {
         languageId === "vue"
     )
 }
+
+export function getDurationAlert(content: string, duration: number) {
+    let timer: NodeJS.Timeout | undefined
+    return {
+        register: () => {
+            timer = setTimeout(() => {
+                vscode.window.showInformationMessage(
+                    `Typescript Explorer: ${content}`
+                )
+            }, duration)
+        },
+        abort: () => {
+            timer && clearTimeout(timer)
+            timer = undefined
+        },
+    }
+}
