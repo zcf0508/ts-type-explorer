@@ -13,8 +13,12 @@ import { SourceFileLocation, TypescriptContext } from "./types"
 
 const windowsPathReg = /\\/g
 
-// https://github.com/volarjs/volar.js/blob/v2.2.0-alpha.12/packages/typescript/lib/node/proxyCreateProgram.ts#L209
-type VuePrograme = ts.Program & { __volar__?: { language: Language } }
+type VuePrograme = ts.Program & {
+    // https://github.com/volarjs/volar.js/blob/v2.2.0/packages/typescript/lib/node/proxyCreateProgram.ts#L209
+    __volar__?: { language: Language }
+    // https://github.com/vuejs/language-tools/blob/v2.0.16/packages/typescript-plugin/index.ts#L75
+    __vue__?: { language: Language }
+}
 
 let oldPrograme: VuePrograme | undefined
 
@@ -75,13 +79,14 @@ export function getPositionOfLineAndCharacterForVue(
 
     oldPrograme = oldPrograme ?? ctx.program
 
-    if (!oldPrograme?.__volar__) {
+    if (!oldPrograme?.__vue__ && !oldPrograme?.__volar__) {
         console.log("create vue program")
         oldPrograme = createProgram(options) as VuePrograme
     }
 
-    if (oldPrograme.__volar__?.language.scripts) {
-        const vFile = oldPrograme.__volar__.language.scripts.get(fileName)
+    const language = (oldPrograme.__volar__ || oldPrograme.__vue__)?.language
+    if (language?.scripts) {
+        const vFile = language.scripts.get(fileName)
         if (
             vFile?.generated?.root &&
             vFile?.generated?.root.languageId === "vue"
