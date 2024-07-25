@@ -1046,7 +1046,6 @@ export function getTypeInfoAtRange(
         )
         startPos = _startPos
         fixLocation = _fixLocation
-        console.log(startPos, rawStartPos)
     }
 
     // TODO: integrate this
@@ -1071,19 +1070,21 @@ export function getTypeInfoAtRange(
         const typeLocation =
             typeInfoAtRange?.symbolMeta?.declarations?.[0].location
         if (typeLocation && typeLocation.fileName === location.fileName) {
-            const newStartPos = sourceFile.getPositionOfLineAndCharacter(
-                typeLocation.range.start.line,
-                typeLocation.range.start.character
-            )
-            const newEndPos = sourceFile.getPositionOfLineAndCharacter(
+            const typeLocationStartPos =
+                sourceFile.getPositionOfLineAndCharacter(
+                    typeLocation.range.start.line,
+                    typeLocation.range.start.character
+                )
+            const typeLocationEndPos = sourceFile.getPositionOfLineAndCharacter(
                 typeLocation.range.end.line,
                 typeLocation.range.end.character
             )
 
             typeLocation.range.start =
-                fixLocation(newStartPos) ?? typeLocation.range.start
+                fixLocation(typeLocationStartPos) ?? typeLocation.range.start
+
             typeLocation.range.end =
-                fixLocation(newEndPos) ?? typeLocation.range.end
+                fixLocation(typeLocationEndPos) ?? typeLocation.range.end
         }
         if ("properties" in typeInfoAtRange) {
             typeInfoAtRange.properties?.forEach((property) => {
