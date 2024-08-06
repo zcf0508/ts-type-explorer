@@ -4,7 +4,7 @@ import { selectionEnabled } from "../config"
 import { getTypeTreeAtRange } from "../server"
 import { isDocumentSupported, logError, showError } from "../util"
 import { TypeTreeItem, TypeTreeProvider } from "../view/typeTreeView"
-import { ViewProviders } from "../view/views"
+import { ViewProviders, treeView } from "../view/views"
 
 export class StateManager {
     public typeTree: TypeInfo | undefined
@@ -157,6 +157,10 @@ export class StateManager {
         selections: readonly vscode.Range[],
         ignoreSelectionLock = false
     ) {
+        if (!treeView?.visible) {
+            return
+        }
+
         if (this.getSelectionLock() && !ignoreSelectionLock) {
             return
         }

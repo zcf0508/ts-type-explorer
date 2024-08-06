@@ -1,10 +1,12 @@
 import * as vscode from "vscode"
 import { StateManager } from "../state/stateManager"
-import { TypeTreeProvider } from "./typeTreeView"
+import { TypeTreeItem, TypeTreeProvider } from "./typeTreeView"
 
 export type ViewProviders = {
     typeTreeProvider: TypeTreeProvider
 }
+
+export let treeView: vscode.TreeView<TypeTreeItem> | undefined
 
 export function createAndRegisterViews(
     context: vscode.ExtensionContext,
@@ -12,9 +14,11 @@ export function createAndRegisterViews(
 ): ViewProviders {
     const typeTreeProvider = new TypeTreeProvider(stateManager)
 
-    context.subscriptions.push(
-        vscode.window.registerTreeDataProvider("type-tree", typeTreeProvider)
-    )
+    treeView = vscode.window.createTreeView("type-tree", {
+        treeDataProvider: typeTreeProvider,
+    })
+
+    context.subscriptions.push(treeView)
 
     return { typeTreeProvider }
 }
