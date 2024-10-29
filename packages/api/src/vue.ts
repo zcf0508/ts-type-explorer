@@ -1,16 +1,15 @@
 /* eslint-disable import/no-extraneous-dependencies */
 import type * as ts from "typescript/lib/tsserverlibrary"
+import { type Language } from "@volar/language-core"
 import {
+    proxyCreateProgram,
     type TypeScriptServiceScript,
-    type Language,
-} from "@volar/language-core"
-import { proxyCreateProgram } from "@volar/typescript"
+} from "@volar/typescript"
 import {
     VueCompilerOptions,
     createParsedCommandLine,
     resolveVueCompilerOptions,
-    createVueLanguagePlugin2,
-    createRootFileChecker,
+    createVueLanguagePlugin,
 } from "@vue/language-core"
 import { SourceFileLocation, TypescriptContext } from "./types"
 
@@ -23,7 +22,7 @@ type VuePrograme = ts.Program & {
     __vue__?: { language: Language }
 }
 
-let oldPrograme: VuePrograme | undefined
+let tsPrograme: VuePrograme | undefined
 
 function getMappingOffset(
     language: Language,
@@ -55,7 +54,7 @@ export function getPositionOfLineAndCharacterForVue(
         host: ctx.ts.createCompilerHost(compilerOptions),
         rootNames: ctx.program.getRootFileNames(),
         options: compilerOptions,
-        oldProgram: oldPrograme || ctx.program,
+        oldProgram: ctx.program,
     }
 
     let vueOptions: VueCompilerOptions
@@ -74,32 +73,27 @@ export function getPositionOfLineAndCharacterForVue(
                     : resolveVueCompilerOptions({
                           extensions: [".vue", ".cext"],
                       })
-            const vueLanguagePlugin = createVueLanguagePlugin2<string>(
+            const vueLanguagePlugin = createVueLanguagePlugin<string>(
                 ts,
-                (id) => id,
-                createRootFileChecker(
-                    undefined,
-                    () =>
-                        options.rootNames.map((rootName) =>
-                            rootName.replace(windowsPathReg, "/")
-                        ),
-                    options.host?.useCaseSensitiveFileNames?.() ?? false
-                ),
                 options.options,
-                vueOptions
+                vueOptions,
+                (id) => id
             )
             return [vueLanguagePlugin]
         }
     )
 
-    oldPrograme = oldPrograme ?? ctx.program
+    tsPrograme = ctx.program
 
-    if (!oldPrograme?.__vue__ && !oldPrograme?.__volar__) {
+    if (!(tsPrograme?.__vue__ || tsPrograme?.__volar__)) {
         console.log("create vue program")
-        oldPrograme = createProgram(options) as VuePrograme
+        tsPrograme = createProgram(options) as VuePrograme
     }
 
-    const language = (oldPrograme.__volar__ || oldPrograme.__vue__)?.language
+    let fixLocation = (startPos: number) =>
+        undefined as ts.LineAndCharacter | undefined
+
+    const language = (tsPrograme.__volar__ || tsPrograme.__vue__)?.language
     if (language?.scripts) {
         const vFile = language.scripts.get(fileName)
         const serviceScript =
@@ -110,37 +104,16 @@ export function getPositionOfLineAndCharacterForVue(
             const sourceMap = language.maps.get(serviceScript.code, vFile)
 
             const snapshotLength = getMappingOffset(language, serviceScript)
-            if (startPos < snapshotLength) {
-                for (const [generatedLocation] of sourceMap.toGeneratedLocation(
-                    startPos
-                )) {
-                    if (generatedLocation) {
-                        startPos = generatedLocation + snapshotLength
-                    }
+
+            for (const [generatedLocation] of sourceMap.toGeneratedLocation(
+                startPos
+            )) {
+                if (generatedLocation) {
+                    startPos = generatedLocation + snapshotLength
                 }
             }
-        }
-    }
 
-    function fixLocation(startPos: number) {
-        if (!oldPrograme?.__vue__ && !oldPrograme?.__volar__) {
-            console.log("create vue program")
-            oldPrograme = createProgram(options) as VuePrograme
-        }
-
-        const language = (oldPrograme.__volar__ || oldPrograme.__vue__)
-            ?.language
-
-        if (language?.scripts) {
-            const vFile = language.scripts.get(fileName)
-            const serviceScript =
-                vFile?.generated?.languagePlugin.typescript?.getServiceScript(
-                    vFile.generated.root
-                )
-            if (vFile?.generated?.root?.languageId === "vue" && serviceScript) {
-                const sourceMap = language.maps.get(serviceScript.code, vFile)
-                const snapshotLength = getMappingOffset(language, serviceScript)
-
+            fixLocation = (startPos: number) => {
                 for (const [sourceLocation] of sourceMap.toSourceLocation(
                     startPos - snapshotLength
                 )) {
@@ -152,10 +125,10 @@ export function getPositionOfLineAndCharacterForVue(
                         return restoreLocation
                     }
                 }
+
+                return undefined
             }
         }
-
-        return undefined
     }
 
     return [startPos, fixLocation] as const
