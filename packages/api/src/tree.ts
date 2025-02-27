@@ -1067,27 +1067,44 @@ export function getTypeInfoAtRange(
         typeInfoAtRange: TypeInfo,
         sourceFile: ts.SourceFile
     ) {
-        const typeLocation =
-            typeInfoAtRange?.symbolMeta?.declarations?.[0].location
-        if (typeLocation && typeLocation.fileName === location.fileName) {
-            const typeLocationStartPos =
-                sourceFile.getPositionOfLineAndCharacter(
-                    typeLocation.range.start.line,
-                    typeLocation.range.start.character
-                )
-            const typeLocationEndPos = sourceFile.getPositionOfLineAndCharacter(
-                typeLocation.range.end.line,
-                typeLocation.range.end.character
-            )
+        for (const declaration of typeInfoAtRange?.symbolMeta?.declarations ||
+            []) {
+            const typeLocation = declaration.location
+            if (typeLocation && typeLocation.fileName === location.fileName) {
+                const typeLocationStartPos =
+                    sourceFile.getPositionOfLineAndCharacter(
+                        typeLocation.range.start.line,
+                        typeLocation.range.start.character
+                    )
+                const typeLocationEndPos =
+                    sourceFile.getPositionOfLineAndCharacter(
+                        typeLocation.range.end.line,
+                        typeLocation.range.end.character
+                    )
 
-            typeLocation.range.start =
-                fixLocation(typeLocationStartPos) ?? typeLocation.range.start
+                typeLocation.range.start =
+                    fixLocation(typeLocationStartPos) ??
+                    typeLocation.range.start
 
-            typeLocation.range.end =
-                fixLocation(typeLocationEndPos) ?? typeLocation.range.end
+                typeLocation.range.end =
+                    fixLocation(typeLocationEndPos) ?? typeLocation.range.end
+            }
         }
+
         if ("properties" in typeInfoAtRange) {
             typeInfoAtRange.properties?.forEach((property) => {
+                updateLocation(property, sourceFile)
+            })
+        }
+
+        if ("types" in typeInfoAtRange) {
+            typeInfoAtRange.types?.forEach((property) => {
+                updateLocation(property, sourceFile)
+            })
+        }
+
+        if ("exports" in typeInfoAtRange) {
+            typeInfoAtRange.exports?.forEach((property) => {
                 updateLocation(property, sourceFile)
             })
         }
