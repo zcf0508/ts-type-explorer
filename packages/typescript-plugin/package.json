@@ -1,14 +1,18 @@
 {
-    "name": "@ts-type-explorer/typescript-plugin",
-    "version": "0.4.0",
-    "main": "./dist",
-    "type": "commonjs",
-    "license": "MIT",
-    "private": "true",
-    "dependencies": {
-        "@ts-type-explorer/api": "^0.4.0"
-    },
-    "devDependencies": {
-        "typescript": "^5.3.0"
-    }
+  "name": "@ts-type-explorer/typescript-plugin",
+  "type": "commonjs",
+  "version": "0.4.0",
+  "private": "true",
+  "license": "MIT",
+  "main": "./dist",
+  "scripts": {
+    "build": "tsup"
+  },
+  "dependencies": {
+    "@ts-type-explorer/api": "workspace:*"
+  },
+  "devDependencies": {
+    "tsup": "catalog:",
+    "typescript": "catalog:"
+  }
 }

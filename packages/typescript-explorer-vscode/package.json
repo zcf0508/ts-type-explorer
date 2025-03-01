@@ -1,296 +1,293 @@
 {
-    "name": "typescript-explorer",
-    "displayName": "%typescriptExplorer.title%",
-    "description": "Full type information for variables, components, functions, and more in TypeScript projects!",
-    "publisher": "mxsdev",
-    "version": "0.4.2",
-    "preview": true,
-    "private": true,
-    "icon": "resources/logo.png",
-    "repository": {
-        "type": "git",
-        "url": "https://github.com/mxsdev/ts-type-explorer.git"
+  "publisher": "mxsdev",
+  "name": "typescript-explorer",
+  "displayName": "%typescriptExplorer.title%",
+  "version": "0.4.2",
+  "private": true,
+  "description": "Full type information for variables, components, functions, and more in TypeScript projects!",
+  "preview": true,
+  "license": "MIT",
+  "homepage": "https://github.com/mxsdev/ts-type-explorer/tree/main/packages/typescript-explorer-vscode",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/mxsdev/ts-type-explorer.git"
+  },
+  "keywords": [
+    "typescript",
+    "types",
+    "explore",
+    "expand",
+    "productivity"
+  ],
+  "categories": [
+    "Programming Languages",
+    "Visualization",
+    "Education",
+    "Other"
+  ],
+  "main": "./out/extension.js",
+  "icon": "resources/logo.png",
+  "engines": {
+    "vscode": "^1.71.0"
+  },
+  "activationEvents": [
+    "onLanguage:typescript",
+    "onLanguage:javascript",
+    "onLanguage:typescriptreact",
+    "onLanguage:javascriptreact",
+    "onView:type-tree",
+    "onCommand:typescriptExplorer.typeTree.view.refresh",
+    "onCommand:typescriptExplorer.typeTree.view.icons.enabled.toggle",
+    "onCommand:typescriptExplorer.typeTree.view.icons.colors.enabled.toggle",
+    "onCommand:typescriptExplorer.typeTree.view.show.typeParameters.toggle",
+    "onCommand:typescriptExplorer.typeTree.view.show.baseClass.toggle",
+    "onCommand:typescriptExplorer.selection.lock",
+    "onCommand:typescriptExplorer.selection.unlock",
+    "onCommand:typescriptExplorer.selection.select",
+    "onCommand:typescriptExplorer.typeTree.selection.enable.toggle"
+  ],
+  "contributes": {
+    "configuration": {
+      "title": "%typescriptExplorer.title%",
+      "properties": {
+        "typescriptExplorer.typeTree.view.icons.enable": {
+          "description": "Enable icons in type tree view",
+          "type": "boolean",
+          "default": true
+        },
+        "typescriptExplorer.typeTree.view.icons.colors.enable": {
+          "description": "Enable icon colors in type tree view",
+          "type": "boolean",
+          "default": true
+        },
+        "typescriptExplorer.typeTree.view.show.typeParameters": {
+          "description": "Show type parameter info in type tree view under <type parameters>",
+          "type": "boolean",
+          "default": true
+        },
+        "typescriptExplorer.typeTree.view.show.baseClass": {
+          "description": "Show information about base classes in type tree view under <extends>\nThis applies only to interfaces and classes",
+          "type": "boolean",
+          "default": true
+        },
+        "typescriptExplorer.typeTree.selection.enable": {
+          "description": "If enabled, the active type in type tree view will update on every click in the text editor\nIf disabled, you can set the selection through the right-click menu, or by triggering the \"Select Symbol in Type Tree\" command",
+          "type": "boolean",
+          "default": true
+        },
+        "typescriptExplorer.typeTree.readonly.enable": {
+          "description": "Prepend \"readonly\" to readonly arrays, tuples, and properties",
+          "type": "boolean",
+          "default": false
+        },
+        "typescriptExplorer.errorMessages.showDialogue": {
+          "description": "Show dialogue messages on internal errors",
+          "type": "boolean",
+          "default": false
+        },
+        "typescriptExplorer.errorMessages.log": {
+          "description": "Log internal errors to console",
+          "type": "boolean",
+          "default": true
+        },
+        "typescriptExplorer.typeTree.maxRecursionDepth": {
+          "markdownDescription": "Controls the maximum tree depth when retrieving type information.\n\n**Increasing this far past 6 can have tremendous performance costs, so please adjust with caution.**",
+          "type": "integer",
+          "default": 6
+        },
+        "typescriptExplorer.typeTree.meta.typeArguments.enable": {
+          "markdownDescription": "Include type arguments in labels\n\nFor example, if enabled, a string Promise will look like `Promise<string>` rather than `Promise`",
+          "type": "boolean",
+          "default": true
+        },
+        "typescriptExplorer.typeTree.meta.typeArguments.maxLength": {
+          "markdownDescription": "Maximum length before which label type arguments collapse to ellipses (e.g. `Promise<...>`)",
+          "type": "integer",
+          "default": 10
+        },
+        "typescriptExplorer.typeTree.meta.typeArguments.includeInFunctions": {
+          "markdownDescription": "Whether to provide type argument listing in label for call signatures\n\nFor example, if enabled, a map function call on a string array might look like `map<string>` rather than just `map`",
+          "type": "boolean",
+          "default": false
+        }
+      }
     },
-    "homepage": "https://github.com/mxsdev/ts-type-explorer/tree/main/packages/typescript-explorer-vscode",
-    "engines": {
-        "vscode": "^1.71.0"
-    },
-    "license": "MIT",
-    "categories": [
-        "Programming Languages",
-        "Visualization",
-        "Education",
-        "Other"
+    "commands": [
+      {
+        "title": "Refresh Type Tree",
+        "command": "typescriptExplorer.typeTree.view.refresh",
+        "category": "%typescriptExplorer.title%",
+        "icon": "$(extensions-refresh)"
+      },
+      {
+        "title": "Go To Type",
+        "command": "typescriptExplorer.typeTree.view.declared.goTo",
+        "category": "%typescriptExplorer.title%",
+        "icon": "$(arrow-right)",
+        "enablement": "view == type-tree"
+      },
+      {
+        "title": "Search",
+        "command": "typescriptExplorer.typeTree.view.find",
+        "category": "%typescriptExplorer.title%",
+        "icon": "$(search-view-icon)",
+        "enablement": "view == type-tree"
+      },
+      {
+        "title": "Toggle Icons",
+        "command": "typescriptExplorer.typeTree.view.icons.enabled.toggle",
+        "category": "%typescriptExplorer.typeTree.title%"
+      },
+      {
+        "title": "Toggle Icon Colors",
+        "command": "typescriptExplorer.typeTree.view.icons.colors.enabled.toggle",
+        "category": "%typescriptExplorer.typeTree.title%"
+      },
+      {
+        "title": "Toggle Type Parameter Info",
+        "command": "typescriptExplorer.typeTree.view.show.typeParameters.toggle",
+        "category": "%typescriptExplorer.typeTree.title%"
+      },
+      {
+        "title": "Toggle Base Class Information",
+        "command": "typescriptExplorer.typeTree.view.show.baseClass.toggle",
+        "category": "%typescriptExplorer.typeTree.title%"
+      },
+      {
+        "title": "Lock Type Selection",
+        "command": "typescriptExplorer.selection.lock",
+        "category": "%typescriptExplorer.title%",
+        "icon": "$(unlock)"
+      },
+      {
+        "title": "Unlock Type Selection",
+        "command": "typescriptExplorer.selection.unlock",
+        "category": "%typescriptExplorer.title%",
+        "icon": "$(lock)"
+      },
+      {
+        "title": "Select Symbol in Type Tree",
+        "command": "typescriptExplorer.selection.select",
+        "category": "%typescriptExplorer.title%"
+      },
+      {
+        "title": "Toggle Type Selection On Click",
+        "command": "typescriptExplorer.typeTree.selection.enable.toggle",
+        "category": "%typescriptExplorer.title%"
+      }
     ],
-    "keywords": [
-        "typescript",
-        "types",
-        "explore",
-        "expand",
-        "productivity"
+    "viewsContainers": {
+      "activitybar": [
+        {
+          "id": "typescript-explorer",
+          "title": "%typescriptExplorer.title%",
+          "icon": "$(symbol-type-parameter)"
+        }
+      ]
+    },
+    "views": {
+      "typescript-explorer": [
+        {
+          "id": "type-tree",
+          "name": "%typescriptExplorer.typeTree.shortTitle%"
+        }
+      ]
+    },
+    "viewsWelcome": [
+      {
+        "view": "type-tree",
+        "contents": "To display type information here, open a TypeScript project and click on any variable or type.\n\nTo learn more, [read the docs](https://github.com/mxsdev/ts-type-explorer/blob/main/packages/typescript-explorer-vscode/README.md)!\n\nIf you have just installed TypeScript Explorer and it is not working, try reloading the window/restarting VSCode. If the issue persists, please [file an issue](https://github.com/mxsdev/ts-type-explorer/issues)."
+      }
     ],
-    "activationEvents": [
-        "onLanguage:typescript",
-        "onLanguage:javascript",
-        "onLanguage:typescriptreact",
-        "onLanguage:javascriptreact",
-        "onView:type-tree",
-        "onCommand:typescriptExplorer.typeTree.view.refresh",
-        "onCommand:typescriptExplorer.typeTree.view.icons.enabled.toggle",
-        "onCommand:typescriptExplorer.typeTree.view.icons.colors.enabled.toggle",
-        "onCommand:typescriptExplorer.typeTree.view.show.typeParameters.toggle",
-        "onCommand:typescriptExplorer.typeTree.view.show.baseClass.toggle",
-        "onCommand:typescriptExplorer.selection.lock",
-        "onCommand:typescriptExplorer.selection.unlock",
-        "onCommand:typescriptExplorer.selection.select",
-        "onCommand:typescriptExplorer.typeTree.selection.enable.toggle"
-    ],
-    "main": "./out/extension.js",
-    "contributes": {
-        "configuration": {
-            "title": "%typescriptExplorer.title%",
-            "properties": {
-                "typescriptExplorer.typeTree.view.icons.enable": {
-                    "description": "Enable icons in type tree view",
-                    "type": "boolean",
-                    "default": true
-                },
-                "typescriptExplorer.typeTree.view.icons.colors.enable": {
-                    "description": "Enable icon colors in type tree view",
-                    "type": "boolean",
-                    "default": true
-                },
-                "typescriptExplorer.typeTree.view.show.typeParameters": {
-                    "description": "Show type parameter info in type tree view under <type parameters>",
-                    "type": "boolean",
-                    "default": true
-                },
-                "typescriptExplorer.typeTree.view.show.baseClass": {
-                    "description": "Show information about base classes in type tree view under <extends>\nThis applies only to interfaces and classes",
-                    "type": "boolean",
-                    "default": true
-                },
-                "typescriptExplorer.typeTree.selection.enable": {
-                    "description": "If enabled, the active type in type tree view will update on every click in the text editor\nIf disabled, you can set the selection through the right-click menu, or by triggering the \"Select Symbol in Type Tree\" command",
-                    "type": "boolean",
-                    "default": true
-                },
-                "typescriptExplorer.typeTree.readonly.enable": {
-                    "description": "Prepend \"readonly\" to readonly arrays, tuples, and properties",
-                    "type": "boolean",
-                    "default": false
-                },
-                "typescriptExplorer.errorMessages.showDialogue": {
-                    "description": "Show dialogue messages on internal errors",
-                    "type": "boolean",
-                    "default": false
-                },
-                "typescriptExplorer.errorMessages.log": {
-                    "description": "Log internal errors to console",
-                    "type": "boolean",
-                    "default": true
-                },
-                "typescriptExplorer.typeTree.maxRecursionDepth": {
-                    "markdownDescription": "Controls the maximum tree depth when retrieving type information.\n\n**Increasing this far past 6 can have tremendous performance costs, so please adjust with caution.**",
-                    "type": "integer",
-                    "default": 6
-                },
-                "typescriptExplorer.typeTree.meta.typeArguments.enable": {
-                    "markdownDescription": "Include type arguments in labels\n\nFor example, if enabled, a string Promise will look like `Promise<string>` rather than `Promise`",
-                    "type": "boolean",
-                    "default": true
-                },
-                "typescriptExplorer.typeTree.meta.typeArguments.maxLength": {
-                    "markdownDescription": "Maximum length before which label type arguments collapse to ellipses (e.g. `Promise<...>`)",
-                    "type": "integer",
-                    "default": 10
-                },
-                "typescriptExplorer.typeTree.meta.typeArguments.includeInFunctions": {
-                    "markdownDescription": "Whether to provide type argument listing in label for call signatures\n\nFor example, if enabled, a map function call on a string array might look like `map<string>` rather than just `map`",
-                    "type": "boolean",
-                    "default": false
-                }
-            }
+    "menus": {
+      "view/title": [
+        {
+          "command": "typescriptExplorer.typeTree.view.find",
+          "when": "view == type-tree",
+          "group": "navigation@1"
         },
-        "commands": [
-            {
-                "title": "Refresh Type Tree",
-                "command": "typescriptExplorer.typeTree.view.refresh",
-                "category": "%typescriptExplorer.title%",
-                "icon": "$(extensions-refresh)"
-            },
-            {
-                "title": "Go To Type",
-                "command": "typescriptExplorer.typeTree.view.declared.goTo",
-                "category": "%typescriptExplorer.title%",
-                "icon": "$(arrow-right)",
-                "enablement": "view == type-tree"
-            },
-            {
-                "title": "Search",
-                "command": "typescriptExplorer.typeTree.view.find",
-                "category": "%typescriptExplorer.title%",
-                "icon": "$(search-view-icon)",
-                "enablement": "view == type-tree"
-            },
-            {
-                "title": "Toggle Icons",
-                "command": "typescriptExplorer.typeTree.view.icons.enabled.toggle",
-                "category": "%typescriptExplorer.typeTree.title%"
-            },
-            {
-                "title": "Toggle Icon Colors",
-                "command": "typescriptExplorer.typeTree.view.icons.colors.enabled.toggle",
-                "category": "%typescriptExplorer.typeTree.title%"
-            },
-            {
-                "title": "Toggle Type Parameter Info",
-                "command": "typescriptExplorer.typeTree.view.show.typeParameters.toggle",
-                "category": "%typescriptExplorer.typeTree.title%"
-            },
-            {
-                "title": "Toggle Base Class Information",
-                "command": "typescriptExplorer.typeTree.view.show.baseClass.toggle",
-                "category": "%typescriptExplorer.typeTree.title%"
-            },
-            {
-                "title": "Lock Type Selection",
-                "command": "typescriptExplorer.selection.lock",
-                "category": "%typescriptExplorer.title%",
-                "icon": "$(unlock)"
-            },
-            {
-                "title": "Unlock Type Selection",
-                "command": "typescriptExplorer.selection.unlock",
-                "category": "%typescriptExplorer.title%",
-                "icon": "$(lock)"
-            },
-            {
-                "title": "Select Symbol in Type Tree",
-                "command": "typescriptExplorer.selection.select",
-                "category": "%typescriptExplorer.title%"
-            },
-            {
-                "title": "Toggle Type Selection On Click",
-                "command": "typescriptExplorer.typeTree.selection.enable.toggle",
-                "category": "%typescriptExplorer.title%"
-            }
-        ],
-        "viewsContainers": {
-            "activitybar": [
-                {
-                    "id": "typescript-explorer",
-                    "title": "%typescriptExplorer.title%",
-                    "icon": "$(symbol-type-parameter)"
-                }
-            ]
+        {
+          "command": "typescriptExplorer.typeTree.view.refresh",
+          "when": "view == type-tree",
+          "group": "navigation@3"
         },
-        "views": {
-            "typescript-explorer": [
-                {
-                    "id": "type-tree",
-                    "name": "%typescriptExplorer.typeTree.shortTitle%"
-                }
-            ]
+        {
+          "command": "typescriptExplorer.selection.lock",
+          "when": "view == type-tree && typescriptExplorer.selection.locked == false && typescriptExplorer.selection.enabled == true",
+          "group": "navigation@2"
         },
-        "viewsWelcome": [
-            {
-                "view": "type-tree",
-                "contents": "To display type information here, open a TypeScript project and click on any variable or type.\n\nTo learn more, [read the docs](https://github.com/mxsdev/ts-type-explorer/blob/main/packages/typescript-explorer-vscode/README.md)!\n\nIf you have just installed TypeScript Explorer and it is not working, try reloading the window/restarting VSCode. If the issue persists, please [file an issue](https://github.com/mxsdev/ts-type-explorer/issues)."
-            }
-        ],
-        "menus": {
-            "view/title": [
-                {
-                    "command": "typescriptExplorer.typeTree.view.find",
-                    "when": "view == type-tree",
-                    "group": "navigation@1"
-                },
-                {
-                    "command": "typescriptExplorer.typeTree.view.refresh",
-                    "when": "view == type-tree",
-                    "group": "navigation@3"
-                },
-                {
-                    "command": "typescriptExplorer.selection.lock",
-                    "when": "view == type-tree && typescriptExplorer.selection.locked == false && typescriptExplorer.selection.enabled == true",
-                    "group": "navigation@2"
-                },
-                {
-                    "command": "typescriptExplorer.selection.unlock",
-                    "when": "view == type-tree && typescriptExplorer.selection.locked == true && typescriptExplorer.selection.enabled == true",
-                    "group": "navigation@2"
-                },
-                {
-                    "command": "typescriptExplorer.typeTree.view.icons.enabled.toggle",
-                    "when": "view == type-tree",
-                    "group": "2_icons@1"
-                },
-                {
-                    "command": "typescriptExplorer.typeTree.view.icons.colors.enabled.toggle",
-                    "when": "view == type-tree",
-                    "group": "2_icons@2"
-                },
-                {
-                    "command": "typescriptExplorer.typeTree.view.show.typeParameters.toggle",
-                    "when": "view == type-tree",
-                    "group": "1_info@1"
-                },
-                {
-                    "command": "typescriptExplorer.typeTree.view.show.baseClass.toggle",
-                    "when": "view == type-tree",
-                    "group": "1_info@2"
-                }
-            ],
-            "view/item/context": [
-                {
-                    "command": "typescriptExplorer.typeTree.view.declared.goTo",
-                    "when": "view == type-tree && viewItem == declared",
-                    "group": "inline"
-                }
-            ],
-            "editor/context": [
-                {
-                    "command": "typescriptExplorer.selection.select",
-                    "group": "type-explorer",
-                    "when": "editorLangId == 'typescript' || editorLangId == 'javascript' || editorLangId == 'typescriptreact' || editorLangId == 'javascriptreact'"
-                }
-            ]
+        {
+          "command": "typescriptExplorer.selection.unlock",
+          "when": "view == type-tree && typescriptExplorer.selection.locked == true && typescriptExplorer.selection.enabled == true",
+          "group": "navigation@2"
         },
-        "typescriptServerPlugins": [
-            {
-                "name": "@ts-type-explorer/typescript-plugin",
-                "enableForWorkspaceTypeScriptVersions": true
-            }
-        ]
+        {
+          "command": "typescriptExplorer.typeTree.view.icons.enabled.toggle",
+          "when": "view == type-tree",
+          "group": "2_icons@1"
+        },
+        {
+          "command": "typescriptExplorer.typeTree.view.icons.colors.enabled.toggle",
+          "when": "view == type-tree",
+          "group": "2_icons@2"
+        },
+        {
+          "command": "typescriptExplorer.typeTree.view.show.typeParameters.toggle",
+          "when": "view == type-tree",
+          "group": "1_info@1"
+        },
+        {
+          "command": "typescriptExplorer.typeTree.view.show.baseClass.toggle",
+          "when": "view == type-tree",
+          "group": "1_info@2"
+        }
+      ],
+      "view/item/context": [
+        {
+          "command": "typescriptExplorer.typeTree.view.declared.goTo",
+          "when": "view == type-tree && viewItem == declared",
+          "group": "inline"
+        }
+      ],
+      "editor/context": [
+        {
+          "command": "typescriptExplorer.selection.select",
+          "group": "type-explorer",
+          "when": "editorLangId == 'typescript' || editorLangId == 'javascript' || editorLangId == 'typescriptreact' || editorLangId == 'javascriptreact'"
+        }
+      ]
     },
-    "scripts": {
-        "vscode:prepublish": "yarn run compile && yarn run bootstrap",
-        "compile": "tsc -p ./",
-        "watch": "tsc -watch -p ./",
-        "pretest": "yarn run compile",
-        "bootstrap": "node ./scripts/bootstrap.js",
-        "bootstrap:clean": "yarn bootstrap --clean",
-        "package": "vsce package --yarn --dependencies",
-        "test": "node ./out/test/runTest.js"
-    },
-    "dependencies": {
-        "@ts-type-explorer/api": "^0.4.0",
-        "@ts-type-explorer/typescript-plugin": "^0.4.0",
-        "@types/vscode": "^1.71.0"
-    },
-    "devDependencies": {
-        "@types/fs-extra": "^9.0.13",
-        "@types/glob": "^8.0.0",
-        "@types/mocha": "^10.0.0",
-        "@types/node": "16.x",
-        "@vscode/test-electron": "^2.1.5",
-        "args-mapper": "^1.0.4",
-        "commander": "^9.4.1",
-        "fs-extra": "^10.1.0",
-        "glob": "^8.0.3",
-        "mocha": "^10.0.0",
-        "typescript": "^5.3.0",
-        "vsce": "^2.13.0"
-    }
+    "typescriptServerPlugins": [
+      {
+        "name": "@ts-type-explorer/typescript-plugin-pack",
+        "enableForWorkspaceTypeScriptVersions": true
+      }
+    ]
+  },
+  "scripts": {
+    "vscode:prepublish": "pnpm run compile",
+    "compile": "tsup",
+    "pretest": "pnpm run compile",
+    "bootstrap": "node ./scripts/bootstrap.js",
+    "package": "vsce package --dependencies",
+    "test": "node ./out/test/runTest.js"
+  },
+  "devDependencies": {
+    "@ts-type-explorer/api": "workspace:*",
+    "@ts-type-explorer/typescript-plugin": "workspace:*",
+    "@types/fs-extra": "^9.0.13",
+    "@types/glob": "^8.0.0",
+    "@types/mocha": "^10.0.0",
+    "@types/node": "22.x",
+    "@types/vscode": "^1.71.0",
+    "@vscode/test-electron": "^2.1.5",
+    "@vscode/vsce": "^3.2.2",
+    "args-mapper": "^1.0.4",
+    "commander": "^9.4.1",
+    "fs-extra": "^10.1.0",
+    "glob": "^8.0.3",
+    "mocha": "^10.0.0",
+    "tsup": "catalog:",
+    "typescript": "catalog:"
+  }
 }

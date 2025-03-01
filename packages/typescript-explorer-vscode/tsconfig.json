@@ -5,7 +5,6 @@
         "outDir": "out",
         "lib": ["ES2020"],
         "sourceMap": true,
-        "rootDir": "src",
         "strict": true /* enable all strict type-checking options */,
         "noImplicitAny": true,
         /* Additional Checks */

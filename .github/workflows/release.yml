@@ -16,8 +16,7 @@ jobs:
       - name: Setup Node
         uses: actions/setup-node@v2
         with:
-          node-version: 16.x
-          cache: yarn
+          node-version: 22.x
 
       - name: Git Identity
         run: |
@@ -37,46 +36,18 @@ jobs:
           CURRENT_VERSION=$(node -p 'require("./lerna.json").version')
           echo "CURRENT_VERSION=${CURRENT_VERSION}" >> $GITHUB_ENV
 
+      - name: Install pnpm
+        run: npm install -g pnpm
       - name: Install Dependencies
-        run: yarn install --frozen-lockfile
+        run: pnpm install
       - name: Build
-        run: yarn build
+        run: pnpm build
 
       - name: Package Vsix
         run: |
           VSIX_FILENAME=typescript-explorer-v${{ env.CURRENT_VERSION }}.vsix
           echo "VSIX_FILENAME=${VSIX_FILENAME}" >> $GITHUB_ENV
-          yarn workspace typescript-explorer package -o ./${VSIX_FILENAME}
-
-      - name: Get Changelog
-        run: |
-          echo "CHANGELOG_MD<<__EOF__" >> $GITHUB_ENV
-          yarn --silent changelog:get >> $GITHUB_ENV
-          echo "__EOF__" >> $GITHUB_ENV
-
-      - name: Tag Check
-        id: tag_check
-        run: |
-          GET_API_URL="https://api.github.com/repos/${GITHUB_REPOSITORY}/git/ref/tags/v${CURRENT_VERSION}"
-          http_status_code=$(curl -LI $GET_API_URL -o /dev/null -w '%{http_code}\n' -s \
-            -H "Authorization: token ${GITHUB_TOKEN}")
-          if [ "$http_status_code" -ne "404" ] ; then
-            echo "::set-output name=exists_tag::true"
-          else
-            echo "::set-output name=exists_tag::false"
-          fi
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Create Git Tag
-        if: steps.tag_check.outputs.exists_tag == 'false'
-        uses: pkgdeps/git-tag-action@v2
-        with:
-          version: ${{ env.CURRENT_VERSION }}
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          github_repo: ${{ github.repository }}
-          git_commit_sha: ${{ github.sha }}
-          git_tag_prefix: "v"
+          pnpm -C packages/typescript-explorer-vscode package -o ./${VSIX_FILENAME}
 
       - name: Create Release
         id: create_release
@@ -86,7 +57,5 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag: v${{ env.CURRENT_VERSION }}
-          body: |
-            ${{ env.CHANGELOG_MD }}
           artifacts: ./packages/typescript-explorer-vscode/${{ env.VSIX_FILENAME }}
           draft: false
