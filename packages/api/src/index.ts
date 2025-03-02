@@ -1,47 +1,47 @@
+export { localizePurpose } from './localization';
+export { recursivelyExpandType } from './merge';
+export { TypeInfoResolver } from './resolveTree';
 export {
-    getSymbolType,
-    multilineTypeToString,
-    pseudoBigIntToString,
-    getNodeType,
-    getNodeSymbol,
-    getDescendantAtPosition,
-    getDescendantAtRange,
-    isValidType,
-    getSymbolOrTypeOfNode,
-} from "./util"
-export { recursivelyExpandType } from "./merge"
+  generateTypeTree,
+  getTypeInfoAtRange,
+  getTypeInfoChildren,
+  getTypeInfoOfNode,
+  getTypeInfoSymbols,
+} from './tree';
 export {
-    generateTypeTree,
-    getTypeInfoChildren,
-    getTypeInfoSymbols,
-    getTypeInfoAtRange,
-    getTypeInfoOfNode,
-} from "./tree"
+  APIConfig,
+  CustomTypeScriptRequest,
+  CustomTypeScriptRequestId,
+  CustomTypeScriptRequestOfId,
+  CustomTypeScriptResponse,
+  CustomTypeScriptResponseBody,
+  IndexInfo,
+  LocalizedTypeInfoError,
+  LocalizedTypeInfoOrError,
+  SignatureInfo,
+  SourceFileLocation,
+  SymbolInfo,
+  SymbolOrType,
+  TextRange,
+  TypeId,
+  TypeInfo,
+  TypeInfoKind,
+  TypeParameterInfo,
+} from './types';
 export {
-    TypeInfo,
-    SymbolInfo,
-    SignatureInfo,
-    TypeId,
-    IndexInfo,
-    TypeInfoKind,
-    TypeParameterInfo,
-    SourceFileLocation,
-    SymbolOrType,
-    CustomTypeScriptRequest,
-    CustomTypeScriptRequestId,
-    CustomTypeScriptResponse,
-    CustomTypeScriptResponseBody,
-    CustomTypeScriptRequestOfId,
-    TextRange,
-    APIConfig,
-    LocalizedTypeInfoOrError,
-    LocalizedTypeInfoError,
-} from "./types"
+  LocalizedTypeInfo,
+  SourceFileTypescriptContext,
+  TypePurpose,
+  TypescriptContext,
+} from './types';
 export {
-    LocalizedTypeInfo,
-    TypePurpose,
-    TypescriptContext,
-    SourceFileTypescriptContext,
-} from "./types"
-export { TypeInfoResolver } from "./resolveTree"
-export { localizePurpose } from "./localization"
+  getDescendantAtPosition,
+  getDescendantAtRange,
+  getNodeSymbol,
+  getNodeType,
+  getSymbolOrTypeOfNode,
+  getSymbolType,
+  isValidType,
+  multilineTypeToString,
+  pseudoBigIntToString,
+} from './util';

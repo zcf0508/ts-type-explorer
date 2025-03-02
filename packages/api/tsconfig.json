@@ -1,19 +1,15 @@
 {
-    "compilerOptions": {
-        "target": "es2017",
-        "lib": ["es2021"],
-        "module": "CommonJS",
-        "moduleResolution": "node",
-        "esModuleInterop": true,
-        "strict": true,
-        "noImplicitAny": true,
-        "noFallthroughCasesInSwitch": true,
-        "declaration": true,
-        "sourceMap": true,
-        "rootDir": "./src",
-        "outDir": "./out",
-        "stripInternal": true
-    },
-    "exclude": ["node_modules", "dist"],
-    "include": ["src"]
+  "compilerOptions": {
+    "target": "ESNext",
+    "lib": ["ESNext"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "resolveJsonModule": true,
+    "strict": true,
+    "strictNullChecks": true,
+    "noEmit": true,
+    "esModuleInterop": true,
+    "skipDefaultLibCheck": true,
+    "skipLibCheck": true
+  }
 }

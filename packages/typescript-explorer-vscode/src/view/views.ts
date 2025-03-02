@@ -1,24 +1,26 @@
-import * as vscode from "vscode"
-import { StateManager } from "../state/stateManager"
-import { TypeTreeItem, TypeTreeProvider } from "./typeTreeView"
+import type { StateManager } from '../state/stateManager';
+import type { TypeTreeItem } from './typeTreeView';
+import * as vscode from 'vscode';
+import { TypeTreeProvider } from './typeTreeView';
 
-export type ViewProviders = {
-    typeTreeProvider: TypeTreeProvider
+export interface ViewProviders {
+  typeTreeProvider: TypeTreeProvider
 }
 
-export let treeView: vscode.TreeView<TypeTreeItem> | undefined
+// eslint-disable-next-line import/no-mutable-exports
+export let treeView: vscode.TreeView<TypeTreeItem> | undefined;
 
 export function createAndRegisterViews(
-    context: vscode.ExtensionContext,
-    stateManager: StateManager
+  context: vscode.ExtensionContext,
+  stateManager: StateManager,
 ): ViewProviders {
-    const typeTreeProvider = new TypeTreeProvider(stateManager)
+  const typeTreeProvider = new TypeTreeProvider(stateManager);
 
-    treeView = vscode.window.createTreeView("type-tree", {
-        treeDataProvider: typeTreeProvider,
-    })
+  treeView = vscode.window.createTreeView('type-tree', {
+    treeDataProvider: typeTreeProvider,
+  });
 
-    context.subscriptions.push(treeView)
+  context.subscriptions.push(treeView);
 
-    return { typeTreeProvider }
+  return { typeTreeProvider };
 }

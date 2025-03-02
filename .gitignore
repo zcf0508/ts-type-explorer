@@ -4,7 +4,6 @@
 tests/baselines/local
 
 ## Environment ##
-.vscode/settings.json
 .vscode/launch.json
 
 ## Build ##

@@ -1,111 +1,112 @@
-import * as vscode from "vscode"
-import { mapObject } from "./functionalUtil"
-import { smartlySetConfigValue } from "./util"
-import { ViewProviders } from "./view/views"
+import type { ViewProviders } from './view/views';
+import * as vscode from 'vscode';
+import { mapObject } from './functionalUtil';
+import { smartlySetConfigValue } from './util';
 
 const typeTreeConfigBoolean = {
-    iconsEnabled: ["typescriptExplorer.typeTree.view.icons.enable"],
-    iconColorsEnabled: ["typescriptExplorer.typeTree.view.icons.colors.enable"],
-    showTypeParameterInfo: [
-        "typescriptExplorer.typeTree.view.show.typeParameters",
-    ],
-    showBaseClassInfo: ["typescriptExplorer.typeTree.view.show.baseClass"],
-    selectionEnabled: ["typescriptExplorer.typeTree.selection.enable", false],
-    readonlyEnabled: ["typescriptExplorer.typeTree.readonly.enable"],
-    descriptionTypeArgumentsEnabled: [
-        "typescriptExplorer.typeTree.meta.typeArguments.enable",
-    ],
-    metaTypeArgumentsInFunction: [
-        "typescriptExplorer.typeTree.meta.typeArguments.includeInFunctions",
-    ],
-} as const
+  iconsEnabled: ['typescriptExplorer.typeTree.view.icons.enable'],
+  iconColorsEnabled: ['typescriptExplorer.typeTree.view.icons.colors.enable'],
+  showTypeParameterInfo: [
+    'typescriptExplorer.typeTree.view.show.typeParameters',
+  ],
+  showBaseClassInfo: ['typescriptExplorer.typeTree.view.show.baseClass'],
+  selectionEnabled: ['typescriptExplorer.typeTree.selection.enable', false],
+  readonlyEnabled: ['typescriptExplorer.typeTree.readonly.enable'],
+  descriptionTypeArgumentsEnabled: [
+    'typescriptExplorer.typeTree.meta.typeArguments.enable',
+  ],
+  metaTypeArgumentsInFunction: [
+    'typescriptExplorer.typeTree.meta.typeArguments.includeInFunctions',
+  ],
+} as const;
 
 const typeTreeConfigNumeric = {
-    descriptionTypeArgumentsMaxLength: [
-        "typescriptExplorer.typeTree.meta.typeArguments.maxLength",
-    ],
-} as const
+  descriptionTypeArgumentsMaxLength: [
+    'typescriptExplorer.typeTree.meta.typeArguments.maxLength',
+  ],
+} as const;
 
 const basicConfigBoolean = {
-    dialogueErrors: "typescriptExplorer.errorMessages.showDialogue",
-    logErrors: "typescriptExplorer.errorMessages.log",
-} as const
+  dialogueErrors: 'typescriptExplorer.errorMessages.showDialogue',
+  logErrors: 'typescriptExplorer.errorMessages.log',
+} as const;
 
 const basicConfigNumeric = {
-    maxRecursionDepth: "typescriptExplorer.typeTree.maxRecursionDepth",
+  maxRecursionDepth: 'typescriptExplorer.typeTree.maxRecursionDepth',
+};
+
+function exportBooleanConfig(id: string, defaultValue?: boolean) {
+  return {
+    get: () => !!config().get(id, defaultValue),
+    toggle: () =>
+      smartlySetConfigValue(
+        id,
+        !config().get(id, defaultValue),
+        config(),
+      ),
+  } as const;
 }
 
-const exportBooleanConfig = (id: string, defaultValue?: boolean) =>
-    ({
-        get: () => !!config().get(id, defaultValue),
-        toggle: () =>
-            smartlySetConfigValue(
-                id,
-                !config().get(id, defaultValue),
-                config()
-            ),
-    } as const)
-
-const exportNumericConfig = (id: string) => ({
+function exportNumericConfig(id: string) {
+  return {
     get: () => config().get<number>(id),
     set: (value: number | undefined) =>
-        smartlySetConfigValue(id, value, config()),
-})
+      smartlySetConfigValue(id, value, config()),
+  };
+}
 
 const typeTreeConfig = [
-    ...Object.values(typeTreeConfigBoolean),
-    ...Object.values(typeTreeConfigNumeric),
-]
+  ...Object.values(typeTreeConfigBoolean),
+  ...Object.values(typeTreeConfigNumeric),
+];
 
 export function registerConfig(
-    context: vscode.ExtensionContext,
-    viewProviders: ViewProviders
+  context: vscode.ExtensionContext,
+  viewProviders: ViewProviders,
 ) {
-    const { typeTreeProvider } = viewProviders
+  const { typeTreeProvider } = viewProviders;
 
-    typeTreeConfig.forEach(([configId, refresh = true]) => {
-        if (!refresh) return
+  typeTreeConfig.forEach(([configId, refresh = true]) => {
+    if (!refresh) {
+      return;
+    }
 
-        vscode.workspace.onDidChangeConfiguration(
-            (event) => {
-                if (event.affectsConfiguration(configId)) {
-                    typeTreeProvider.refresh()
-                }
-            },
-            undefined,
-            context.subscriptions
-        )
-    })
+    vscode.workspace.onDidChangeConfiguration(
+      (event) => {
+        if (event.affectsConfiguration(configId)) {
+          typeTreeProvider.refresh();
+        }
+      },
+      undefined,
+      context.subscriptions,
+    );
+  });
 }
 
 export const {
-    iconColorsEnabled,
-    iconsEnabled,
-    selectionEnabled,
-    showBaseClassInfo,
-    showTypeParameterInfo,
-    readonlyEnabled,
-    logErrors,
-    dialogueErrors,
-    maxRecursionDepth,
-    descriptionTypeArgumentsMaxLength,
-    descriptionTypeArgumentsEnabled,
-    metaTypeArgumentsInFunction,
+  iconColorsEnabled,
+  iconsEnabled,
+  selectionEnabled,
+  showBaseClassInfo,
+  showTypeParameterInfo,
+  readonlyEnabled,
+  logErrors,
+  dialogueErrors,
+  maxRecursionDepth,
+  descriptionTypeArgumentsMaxLength,
+  descriptionTypeArgumentsEnabled,
+  metaTypeArgumentsInFunction,
 } = {
-    ...mapObject(typeTreeConfigBoolean, ({ value: [id] }) =>
-        exportBooleanConfig(id)
-    ),
-    ...mapObject(basicConfigBoolean, ({ value: id }) =>
-        exportBooleanConfig(id)
-    ),
-    ...mapObject(basicConfigNumeric, ({ value: id }) =>
-        exportNumericConfig(id)
-    ),
-    ...mapObject(typeTreeConfigNumeric, ({ value: [id] }) =>
-        exportNumericConfig(id)
-    ),
-}
+  ...mapObject(typeTreeConfigBoolean, ({ value: [id] }) =>
+    exportBooleanConfig(id)),
+  ...mapObject(basicConfigBoolean, ({ value: id }) =>
+    exportBooleanConfig(id)),
+  ...mapObject(basicConfigNumeric, ({ value: id }) =>
+    exportNumericConfig(id)),
+  ...mapObject(typeTreeConfigNumeric, ({ value: [id] }) =>
+    exportNumericConfig(id)),
+};
 
 function config() {
-    return vscode.workspace.getConfiguration()
+  return vscode.workspace.getConfiguration();
 }

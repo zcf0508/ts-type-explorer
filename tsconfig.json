@@ -1,16 +1,16 @@
 {
-    "references": [
-        { "path": "./packages/api" },
-        { "path": "./packages/typescript-explorer-vscode" },
-        { "path": "./packages/typescript-plugin" }
-    ],
-    "files": [],
-    "include": [],
-    "exclude": ["**/node_modules", "**/dist", "./tests/**"],
-    "compilerOptions": {
-        "esModuleInterop": true,
-        "resolveJsonModule": true,
-        "jsx": "react",
-        "sourceMap": true
-    }
+  "compilerOptions": {
+    "jsx": "react",
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "esModuleInterop": true
+  },
+  "references": [
+    { "path": "./packages/api" },
+    { "path": "./packages/typescript-explorer-vscode" },
+    { "path": "./packages/typescript-plugin" }
+  ],
+  "files": [],
+  "include": [],
+  "exclude": ["**/node_modules", "**/dist", "./tests/**"]
 }
