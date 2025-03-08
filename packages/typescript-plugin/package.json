@@ -6,7 +6,8 @@
   "license": "MIT",
   "main": "./dist",
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "typecheck": "tsc --noEmit"
   },
   "dependencies": {
     "@ts-type-explorer/api": "workspace:*"

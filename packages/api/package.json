@@ -22,12 +22,13 @@
     }
   },
   "scripts": {
-    "build": "tsup"
+    "build": "tsup",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
-    "@volar/language-core": "^2.4.11",
-    "@volar/typescript": "^2.4.11",
-    "@vue/language-core": "^2.2.4",
+    "@volar/language-core": "latest",
+    "@volar/typescript": "latest",
+    "@vue/language-core": "latest",
     "tsup": "catalog:",
     "typescript": "catalog:"
   }

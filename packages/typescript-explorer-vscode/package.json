@@ -269,7 +269,8 @@
     "build": "tsup",
     "pretest": "pnpm run build",
     "package": "vsce package --dependencies",
-    "test": "node ./out/test/runTest.js"
+    "test": "node ./out/test/runTest.js",
+    "typecheck": "tsc --noEmit"
   },
   "devDependencies": {
     "@ts-type-explorer/api": "workspace:*",
