@@ -265,10 +265,9 @@
     ]
   },
   "scripts": {
-    "vscode:prepublish": "pnpm run compile",
-    "compile": "tsup",
-    "pretest": "pnpm run compile",
-    "bootstrap": "node ./scripts/bootstrap.js",
+    "vscode:prepublish": "pnpm run build",
+    "build": "tsup",
+    "pretest": "pnpm run build",
     "package": "vsce package --dependencies",
     "test": "node ./out/test/runTest.js"
   },

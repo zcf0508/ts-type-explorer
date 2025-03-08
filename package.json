@@ -8,14 +8,14 @@
     "pnpm": ">=9.0.0"
   },
   "scripts": {
-    "build": "tsc -b",
-    "watch": "tsc -b --watch",
+    "build": "pnpm -C packages/api run build && pnpm -C packages/typescript-plugin run build",
+    "build:vscode": "pnpm -C packages/typescript-explorer-vscode run build",
     "test": "mocha",
     "test:vscode": "wdio run ./wdio.conf.ts",
     "baseline-accept": "ts-node ./scripts/acceptBaselines.ts",
     "lint": "eslint .",
     "format": "eslint . --fix",
-    "version:bump": "bumpp -r",
+    "release": "bumpp -r",
     "wdio": "wdio run ./wdio.conf.ts"
   },
   "devDependencies": {
