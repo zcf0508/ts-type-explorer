@@ -9,7 +9,8 @@
   },
   "scripts": {
     "build": "pnpm -C packages/api run build && pnpm -C packages/typescript-plugin run build",
-    "build:vscode": "pnpm -C packages/typescript-explorer-vscode run build",
+    "build:vscode": "pnpm run build && pnpm -C packages/typescript-explorer-vscode run build",
+    "package": "pnpm run build && pnpm -C packages/typescript-explorer-vscode run package",
     "test": "mocha",
     "test:vscode": "wdio run ./wdio.conf.ts",
     "baseline-accept": "ts-node ./scripts/acceptBaselines.ts",
