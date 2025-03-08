@@ -14,6 +14,8 @@ export const config: WebdriverIO.Config = {
   maxInstances: 1,
   capabilities: [
     {
+      // https://github.com/webdriverio/webdriverio/issues/13519#issuecomment-2331663601
+      'wdio:enforceWebDriverClassic': true,
       'browserName': 'vscode',
       'browserVersion': '1.86.0',
       'wdio:vscodeOptions': {
