@@ -19,8 +19,6 @@ import {
 const windowsPathReg = /\\/g;
 
 type VuePrograme = ts.Program & {
-  // https://github.com/volarjs/volar.js/blob/v2.2.0/packages/typescript/lib/node/proxyCreateProgram.ts#L209
-  __volar__?: { language: Language }
   // https://github.com/vuejs/language-tools/blob/v2.0.16/packages/typescript-plugin/index.ts#L75
   __vue__?: { language: Language }
 };
@@ -88,14 +86,14 @@ export function getPositionOfLineAndCharacterForVue(
 
   tsPrograme = ctx.program;
 
-  if (!(tsPrograme?.__vue__ || tsPrograme?.__volar__)) {
+  if (!tsPrograme?.__vue__) {
     console.log('create vue program');
     tsPrograme = createProgram(options) as VuePrograme;
   }
 
   let fixLocation = (startPos: number): ts.LineAndCharacter | undefined => undefined;
 
-  const language = (tsPrograme.__volar__ || tsPrograme.__vue__)?.language;
+  const language = tsPrograme.__vue__?.language;
   if (language?.scripts) {
     const vFile = language.scripts.get(fileName);
     const serviceScript
