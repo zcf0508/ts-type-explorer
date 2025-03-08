@@ -1,7 +1,10 @@
-import path from "path"
+import * as path from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { CustomTreeItem, TextEditor, TreeItem } from "wdio-vscode-service"
 import { openFile } from "./file"
 import { VscodeTypeTreeView } from "./vscodeTypeTree"
+
+const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 export namespace VscodeE2E {
     export function test(cb: (tree: VscodeTypeTreeView) => Promise<void>) {

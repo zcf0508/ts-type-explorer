@@ -12,7 +12,7 @@
     "build:vscode": "pnpm run build && pnpm -C packages/typescript-explorer-vscode run build",
     "package": "pnpm run build && pnpm -C packages/typescript-explorer-vscode run package",
     "typecheck": "pnpm -r run typecheck",
-    "test": "mocha",
+    "test": "vitest",
     "test:vscode": "wdio run ./wdio.conf.ts",
     "baseline-accept": "ts-node ./scripts/acceptBaselines.ts",
     "lint": "eslint .",
@@ -32,11 +32,12 @@
     "@types/mocha": "^10.0.0",
     "@types/node": "^18.8.0",
     "@types/react": "^18.0.24",
-    "@wdio/cli": "8.0.15",
-    "@wdio/local-runner": "8.0.15",
-    "@wdio/mocha-framework": "8.0.14",
-    "@wdio/spec-reporter": "8.0.14",
-    "@wdio/types": "8.0.14",
+    "@vitest/ui": "3.0.8",
+    "@wdio/cli": "9",
+    "@wdio/local-runner": "9",
+    "@wdio/mocha-framework": "9",
+    "@wdio/spec-reporter": "9",
+    "@wdio/types": "9",
     "bumpp": "^10.0.3",
     "chromedriver": "latest",
     "eslint": "^9.10.0",
@@ -44,15 +45,15 @@
     "glob": "^8.0.3",
     "lint-staged": "^13.0.3",
     "mocha": "^10.0.0",
-    "ts-node": "^10.9.1",
     "typescript": "catalog:",
-    "wdio-vscode-service": "5.2.3",
-    "webdriverio": "8.0.15"
+    "vitest": "^3.0.8",
+    "wdio-vscode-service": "6",
+    "webdriverio": "9"
   },
   "pnpm": {
     "overrides": {
       "@types/react": "^18.0.24",
-      "webdriverio": "8.0.15"
+      "webdriverio": "9"
     }
   }
 }

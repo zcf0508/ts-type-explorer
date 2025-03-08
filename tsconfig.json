@@ -8,9 +8,10 @@
   "references": [
     { "path": "./packages/api" },
     { "path": "./packages/typescript-explorer-vscode" },
-    { "path": "./packages/typescript-plugin" }
+    { "path": "./packages/typescript-plugin" },
+    { "path": "./tsconfig.e2e.json" },
+    { "path": "./tsconfig.test.json" }
   ],
   "files": [],
-  "include": [],
   "exclude": ["**/node_modules", "**/dist", "./tests/**"]
 }

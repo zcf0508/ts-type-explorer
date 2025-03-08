@@ -11,5 +11,5 @@
       "wdio-vscode-service"
     ]
   },
-  "include": ["./tests/e2e/**"]
+  "include": ["./tests/e2e/**/*"]
 }

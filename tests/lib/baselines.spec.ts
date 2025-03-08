@@ -2,7 +2,7 @@
 
 import { clearLocalBaselines, generateBaselineTests } from "./baselines"
 
-before(async () => {
+beforeAll(async () => {
     await clearLocalBaselines()
 })
 

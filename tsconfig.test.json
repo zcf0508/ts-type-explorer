@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "es2022",
+    "module": "ESNext",
+    "moduleResolution": "node",
+    "types": [
+      "vitest/globals"
+    ]
+  },
+  "include": ["tests/**/*.spec.ts"]
+}
