@@ -14,7 +14,7 @@ jobs:
           node-version: 22.x
 
       - name: Install pnpm
-        run: npm install -g pnpm
+        run: npm install -g pnpm@9
       - name: Install Dependencies
         run: pnpm install
       - name: Build
@@ -36,12 +36,10 @@ jobs:
           node-version: 22.x
 
       - name: Install pnpm
-        run: npm install -g pnpm
+        run: npm install -g pnpm@9
       - name: Install Dependencies
         run: pnpm install
       - name: Build
         run: pnpm build
       - name: Linter
         run: pnpm run lint
-      - name: Formatting
-        run: pnpm run format:check

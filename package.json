@@ -4,7 +4,8 @@
   "private": true,
   "license": "MIT",
   "engines": {
-    "node": "22"
+    "node": "22",
+    "pnpm": ">=9.0.0"
   },
   "scripts": {
     "build": "tsc -b",
@@ -14,8 +15,7 @@
     "baseline-accept": "ts-node ./scripts/acceptBaselines.ts",
     "lint": "eslint .",
     "format": "eslint . --fix",
-    "version:bump": "lerna version --conventional-commits --skip-git",
-    "changelog:get": "ts-node ./scripts/changelog.ts",
+    "version:bump": "bumpp -r",
     "wdio": "wdio run ./wdio.conf.ts"
   },
   "devDependencies": {
@@ -35,6 +35,7 @@
     "@wdio/mocha-framework": "8.0.14",
     "@wdio/spec-reporter": "8.0.14",
     "@wdio/types": "8.0.14",
+    "bumpp": "^10.0.3",
     "chromedriver": "latest",
     "eslint": "^9.10.0",
     "fs-extra": "^10.1.0",
