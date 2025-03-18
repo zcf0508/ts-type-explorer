@@ -6,10 +6,14 @@ import type {
   SourceFileLocation,
   TypeInfo,
 } from '@ts-type-explorer/api';
+import type { Client } from 'hono/dist/types/client/types';
 import type * as ts from 'typescript/lib/tsserverlibrary';
-
+import type { AppType } from '../../typescript-plugin/src/server';
+import getPorts from 'get-port';
+import { hc } from 'hono/client';
 import * as vscode from 'vscode';
 import { maxRecursionDepth } from './config';
+import { startTsPlugin } from './tsPlugin';
 import {
   getDurationAlert,
   positionFromLineAndCharacter,
@@ -17,6 +21,54 @@ import {
   rangeToTextRange,
   toFileLocationRequestArgs,
 } from './util';
+
+async function waitForServer(
+  checkFn: () => Promise<boolean>,
+  maxWaitTime: number = 5000,
+): Promise<boolean> {
+  const startTime = Date.now();
+  const checkInterval = 500;
+
+  while (Date.now() - startTime < maxWaitTime) {
+    try {
+      if (await checkFn()) {
+        return true;
+      }
+    }
+    catch (error) {
+      console.log(error);
+    }
+
+    await new Promise(resolve => setTimeout(resolve, checkInterval));
+  }
+
+  // If we reached here, we timed out
+  return false;
+}
+
+async function getHonoClient() {
+  let client: ReturnType<typeof hc<AppType>> | undefined;
+
+  async function createHonoClient() {
+    if (client) {
+      return client;
+    }
+    const port = await getPorts();
+
+    const _client = hc<AppType>(`http://localhost:${port}/`);
+
+    await startTsPlugin(port);
+
+    if (await waitForServer(async () => (await _client.ping.$get()).ok)) {
+      client = _client;
+      return _client;
+    }
+
+    throw new Error('Failed to start TypeScript plugin server');
+  }
+
+  return createHonoClient();
+}
 
 async function getQuickInfoAtPosition(
   fileName: string,
@@ -38,6 +90,9 @@ async function getQuickInfoAtPosition(
     );
 }
 
+/**
+ * @deprecated
+ */
 async function customTypescriptRequest<Id extends CustomTypeScriptRequestId>(
   fileName: string,
   position: vscode.Position,
@@ -99,17 +154,22 @@ export function getTypeTreeAtLocation(
   );
 }
 
-export function getTypeTreeAtRange(
+export async function getTypeTreeAtRange(
   fileName: string,
   range: vscode.Range,
 ): Promise<TypeInfo | undefined> {
-  return customTypescriptRequest(
-    fileName,
-    positionFromLineAndCharacter(range.start),
-    {
-      id: 'type-tree',
+  const client = await getHonoClient();
+
+  const res = await client.type.$post({
+    json: {
+      fileName,
       range: rangeToTextRange(range),
-      maxDepth: maxRecursionDepth.get(),
+      maxDepth: maxRecursionDepth.get() || 3,
     },
-  ).then(res => res?.typeInfo);
+  });
+
+  if (res.ok) {
+    return (await res.json()).data;
+  }
+  throw res.status;
 }

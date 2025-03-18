@@ -10,7 +10,11 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@ts-type-explorer/api": "workspace:*"
+    "@hono/arktype-validator": "^2.0.0",
+    "@hono/node-server": "^1.13.8",
+    "@ts-type-explorer/api": "workspace:*",
+    "arktype": "^2.1.9",
+    "hono": "^4.7.4"
   },
   "devDependencies": {
     "tsup": "catalog:",
