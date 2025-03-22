@@ -6,7 +6,6 @@ import type {
   SourceFileLocation,
   TypeInfo,
 } from '@ts-type-explorer/api';
-import type { Client } from 'hono/dist/types/client/types';
 import type * as ts from 'typescript/lib/tsserverlibrary';
 import type { AppType } from '../../typescript-plugin/src/server';
 import getPorts from 'get-port';
@@ -46,7 +45,7 @@ async function waitForServer(
   return false;
 }
 
-async function getHonoClient() {
+function createHonoClientLoader() {
   let client: ReturnType<typeof hc<AppType>> | undefined;
 
   async function createHonoClient() {
@@ -67,7 +66,7 @@ async function getHonoClient() {
     throw new Error('Failed to start TypeScript plugin server');
   }
 
-  return createHonoClient();
+  return createHonoClient;
 }
 
 async function getQuickInfoAtPosition(
@@ -153,6 +152,8 @@ export function getTypeTreeAtLocation(
     rangeFromLineAndCharacters(location.range.start, location.range.end),
   );
 }
+
+const getHonoClient = createHonoClientLoader();
 
 export async function getTypeTreeAtRange(
   fileName: string,
