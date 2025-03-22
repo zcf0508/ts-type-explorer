@@ -3,7 +3,7 @@ import type {
   LocalizedTypeInfoOrError,
 } from '@ts-type-explorer/api';
 import type { StateManager } from '../state/stateManager';
-import * as assert from 'node:assert';
+import assert from 'node:assert';
 import {
   TypeInfoResolver,
 } from '@ts-type-explorer/api';

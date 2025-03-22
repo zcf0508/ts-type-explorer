@@ -9,6 +9,7 @@
     "noImplicitReturns": true,
     "outDir": "out",
     "sourceMap": true,
+    "esModuleInterop": true,
     "skipLibCheck": true
   }
 }
