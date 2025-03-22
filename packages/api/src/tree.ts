@@ -1077,6 +1077,8 @@ export function getTypeInfoAtRange(
   location: SourceFileLocation,
   apiConfig?: Partial<APIConfig>,
 ): TypeInfo | undefined {
+  location.fileName = location.fileName.replace(/\\/g, '/');
+
   const sourceFile = ctx.program.getSourceFile(location.fileName);
 
   if (!sourceFile) {
@@ -1146,6 +1148,12 @@ export function getTypeInfoAtRange(
 
     if ('properties' in typeInfoAtRange) {
       typeInfoAtRange.properties?.forEach((property) => {
+        updateLocation(property, sourceFile);
+      });
+    }
+
+    if ('implementsTypes' in typeInfoAtRange) {
+      typeInfoAtRange.implementsTypes?.forEach((property) => {
         updateLocation(property, sourceFile);
       });
     }
