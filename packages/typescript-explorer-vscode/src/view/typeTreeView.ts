@@ -57,22 +57,6 @@ export class TypeTreeProvider implements vscode.TreeDataProvider<TypeTreeItem> {
       element.tooltip = 'max depth exceeded';
     }
     else {
-      if (element.typeInfo.locations) {
-        for (const location of element.typeInfo.locations) {
-          const { documentation, tags }
-                        = (await getQuickInfoAtLocation(location)) ?? {};
-
-          if (documentation && documentation.length > 0) {
-            element.tooltip = markdownDocumentation(
-              documentation,
-              tags ?? [],
-              vscode.Uri.file(location.fileName),
-            );
-            break;
-          }
-        }
-      }
-
       if (
         element.typeInfo.typeArguments
         && element.typeInfo.typeArguments.length > 0
@@ -99,6 +83,25 @@ export class TypeTreeProvider implements vscode.TreeDataProvider<TypeTreeItem> {
     }
 
     return element;
+  }
+
+  async resolveTreeItem(item: TypeTreeItem): Promise<TypeTreeItem> {
+    if (!item.typeInfo.error && item.typeInfo.kind !== 'max_depth' && item.typeInfo.locations) {
+      for (const location of item.typeInfo.locations) {
+        const { documentation, tags }
+          = (await getQuickInfoAtLocation(location)) ?? {};
+
+        if (documentation && documentation.length > 0) {
+          item.tooltip = markdownDocumentation(
+            documentation,
+            tags ?? [],
+            vscode.Uri.file(location.fileName),
+          );
+          break;
+        }
+      }
+    }
+    return item;
   }
 
   async getChildren(element?: TypeTreeItem): Promise<TypeTreeItem[]> {
