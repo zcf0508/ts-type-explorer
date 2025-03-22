@@ -159,6 +159,13 @@ export async function getTypeTreeAtRange(
   fileName: string,
   range: vscode.Range,
 ): Promise<TypeInfo | undefined> {
+  const { register, abort } = getDurationAlert(
+    'TSServer needs more time to respond, please wait a few seconds',
+    3000,
+  );
+
+  register();
+
   const client = await getHonoClient();
 
   const res = await client.type.$post({
@@ -169,6 +176,7 @@ export async function getTypeTreeAtRange(
     },
   });
 
+  abort();
   if (res.ok) {
     return (await res.json()).data;
   }
