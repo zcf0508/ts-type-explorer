@@ -49,7 +49,7 @@ function createHonoClientLoader() {
   let client: ReturnType<typeof hc<AppType>> | undefined;
 
   async function createHonoClient() {
-    if (client) {
+    if (client && await waitForServer(async () => (await client!.ping.$get()).ok)) {
       return client;
     }
     const port = await getPorts();
