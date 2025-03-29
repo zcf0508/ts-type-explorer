@@ -35,16 +35,7 @@
     "onLanguage:javascript",
     "onLanguage:typescriptreact",
     "onLanguage:javascriptreact",
-    "onView:type-tree",
-    "onCommand:typescriptExplorer.typeTree.view.refresh",
-    "onCommand:typescriptExplorer.typeTree.view.icons.enabled.toggle",
-    "onCommand:typescriptExplorer.typeTree.view.icons.colors.enabled.toggle",
-    "onCommand:typescriptExplorer.typeTree.view.show.typeParameters.toggle",
-    "onCommand:typescriptExplorer.typeTree.view.show.baseClass.toggle",
-    "onCommand:typescriptExplorer.selection.lock",
-    "onCommand:typescriptExplorer.selection.unlock",
-    "onCommand:typescriptExplorer.selection.select",
-    "onCommand:typescriptExplorer.typeTree.selection.enable.toggle"
+    "onLanguage:vue"
   ],
   "contributes": {
     "configuration": {
