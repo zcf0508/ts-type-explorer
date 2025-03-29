@@ -1,3 +1,4 @@
+import { ElementWithContextMenu } from "wdio-vscode-service"
 import {
     SideBarView,
     NewScmView,
@@ -24,20 +25,18 @@ export class VscodeTypeTreeView {
     private async lockButton() {
         const titlePart = this.view.getTitlePart()
 
-        return await titlePart.action$$
-            .then((a) =>
-                Promise.all(
-                    a.map(async (el) => {
-                        const classes = await el.getAttribute("class")
+        const actions = Array.from(await titlePart.action$$) as WebdriverIO.Element[]
 
-                        return classes.includes("codicon-lock") ||
-                            classes.includes("codicon-unlock")
-                            ? el
-                            : undefined
-                    })
-                )
-            )
-            .then((list) => list.find((x) => x)!)
+        const res = await Promise.all(
+          actions.map(async (action) => {
+            const classes = await action.getAttribute("class")
+            if(classes.includes("codicon-lock") || classes.includes("codicon-unlock"))  {
+              return action
+            }
+          })
+        )
+
+        return res.find(Boolean)!
     }
 
     async waitRoot(label?: string) {
