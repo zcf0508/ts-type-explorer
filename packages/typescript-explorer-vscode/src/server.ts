@@ -172,7 +172,7 @@ export async function getTypeTreeAtRange(
     json: {
       fileName,
       range: rangeToTextRange(range),
-      maxDepth: maxRecursionDepth.get() || 3,
+      maxDepth: 6,
     },
   });
 

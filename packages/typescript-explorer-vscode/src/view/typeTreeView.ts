@@ -53,31 +53,26 @@ export class TypeTreeProvider implements vscode.TreeDataProvider<TypeTreeItem> {
       return element;
     }
 
-    if (element.typeInfo.kind === 'max_depth') {
-      element.tooltip = 'max depth exceeded';
-    }
-    else {
-      if (
-        element.typeInfo.typeArguments
-        && element.typeInfo.typeArguments.length > 0
-      ) {
-        const typeArguments = await this.localizeTypeInfoTypeArguments(
-          element.typeInfo,
-        );
+    if (
+      element.typeInfo.typeArguments
+      && element.typeInfo.typeArguments.length > 0
+    ) {
+      const typeArguments = await this.localizeTypeInfoTypeArguments(
+        element.typeInfo,
+      );
 
-        const newMeta = getMetaWithTypeArguments(
-          element.typeInfo,
-          typeArguments,
-        );
+      const newMeta = getMetaWithTypeArguments(
+        element.typeInfo,
+        typeArguments,
+      );
 
-        if (newMeta) {
-          if (newMeta.description) {
-            element.description = newMeta.description;
-          }
+      if (newMeta) {
+        if (newMeta.description) {
+          element.description = newMeta.description;
+        }
 
-          if (newMeta.label) {
-            element.label = newMeta.label;
-          }
+        if (newMeta.label) {
+          element.label = newMeta.label;
         }
       }
     }
@@ -86,7 +81,7 @@ export class TypeTreeProvider implements vscode.TreeDataProvider<TypeTreeItem> {
   }
 
   async resolveTreeItem(item: TypeTreeItem): Promise<TypeTreeItem> {
-    if (!item.typeInfo.error && item.typeInfo.kind !== 'max_depth' && item.typeInfo.locations) {
+    if (!item.typeInfo.error && item.typeInfo.locations) {
       for (const location of item.typeInfo.locations) {
         const { documentation, tags }
           = (await getQuickInfoAtLocation(location)) ?? {};
@@ -151,7 +146,7 @@ export class TypeTreeProvider implements vscode.TreeDataProvider<TypeTreeItem> {
 
       this.typeInfoResolver = new TypeInfoResolver(getTypeTreeAtLocation);
 
-      const localizedTypeInfo = await this.typeInfoResolver.localize(
+      const localizedTypeInfo = await this.typeInfoResolver?.localize(
         typeInfo,
       );
 
@@ -160,9 +155,53 @@ export class TypeTreeProvider implements vscode.TreeDataProvider<TypeTreeItem> {
       ];
     }
     else {
-      const localizedChildren = await this.localizeTypeInfoChildren(
-        element.typeInfo,
-      );
+      const resolveMaxDepthItem = async (parentItem?: TypeTreeItem) => {
+        const location = parentItem?.typeInfo.locations?.[0];
+
+        if (!location) {
+          return [];
+        }
+
+        const childrenTypeInfo = await getTypeTreeAtLocation(location).catch(() => undefined);
+
+        if (!childrenTypeInfo) {
+          return [];
+        }
+
+        const localizedTypeInfoChildren = (await this.typeInfoResolver!.localize(
+          childrenTypeInfo,
+        )).children ?? [];
+
+        const res = (await Promise.all(
+          localizedTypeInfoChildren?.map(async info => await this.typeInfoResolver?.localize(
+            info.info!,
+          )),
+        )).filter(Boolean) as LocalizedTypeInfoOrError[];
+
+        return res;
+      };
+      const _localizedChildren = await (async () => {
+        if (element.typeInfo.kind === 'max_depth') {
+          return await resolveMaxDepthItem(element.parent);
+        }
+        else {
+          return await this.localizeTypeInfoChildren(
+            element.typeInfo,
+          );
+        }
+      })();
+
+      const hasMaxDepth = _localizedChildren.some(info => info.kind === 'max_depth');
+
+      // 如果 _localizedChildren 中有 max_depth 节点，需要 resolveMaxDepthItem 之后，用返回的数组替换原本的 max_depth 节点, 注意，原本是一个节点，替换后应该是多个节点
+      const localizedChildren = await (async () => {
+        if (hasMaxDepth) {
+          return await resolveMaxDepthItem(element);
+        }
+        else {
+          return _localizedChildren;
+        }
+      })();
 
       return localizedChildren
         .map(info => this.createTypeNode(info, element))
@@ -200,7 +239,7 @@ export class TypeTreeItem extends vscode.TreeItem {
   constructor(
     public typeInfo: LocalizedTypeInfoOrError,
     private provider: TypeTreeProvider,
-    protected parent?: TypeTreeItem,
+    public parent?: TypeTreeItem,
   ) {
     const depth = (parent?.depth ?? 0) + 1;
 
