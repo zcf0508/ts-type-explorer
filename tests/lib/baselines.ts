@@ -8,7 +8,6 @@ import {
     baselinesReferencePath,
     testCasePath,
 } from "./files"
-import assert from "assert"
 import glob from "glob"
 import { BaselineGenerators } from "./baselineGenerators"
 import { generateBaseline } from "./baselineGeneratorUtils"
@@ -85,7 +84,7 @@ export async function generateBaselineTests() {
                             .then((v: Buffer | undefined) => v?.toString())
 
                         try {
-                            assert.strictEqual(correct, against)
+                            assert.strictEqual(correct.replaceAll("\\\\", "/"), against.replaceAll("\r\n", "\n"))
                         } catch (e) {
                             await fs.writeFile(
                                 path.join(baselinesLocalPath, testFileName),
