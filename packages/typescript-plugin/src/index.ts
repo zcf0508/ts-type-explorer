@@ -1,17 +1,13 @@
-import type {
-  TypescriptContext,
-} from '@ts-type-explorer/api';
-
+import type { TypescriptContext } from '@ts-type-explorer/api';
 import type * as ts from 'typescript/lib/tsserverlibrary';
-
 import type { PluginConfiguration } from './config';
-import { context } from './context';
+import { contextMap } from './context';
 import { start } from './server';
 
 const init: ts.server.PluginModuleFactory = (modules) => {
   return {
     create: (info: ts.server.PluginCreateInfo) => {
-      function getContext(_info: ts.server.PluginCreateInfo): () => TypescriptContext | undefined {
+      function getContext(_info: ts.server.PluginCreateInfo): () => (TypescriptContext | undefined) {
         const info = _info;
         return () => {
         // @ts-expect-error - ts internal
@@ -31,9 +27,7 @@ const init: ts.server.PluginModuleFactory = (modules) => {
         };
       }
 
-      if (!context.get()) {
-        context.set(getContext(info));
-      }
+      contextMap.set(info.project.getProjectName(), getContext(info));
 
       return info.languageService;
     },

@@ -1,6 +1,10 @@
 import { type as arktype } from 'arktype';
 
-export const queBody = arktype({
+export const pingRequstBody = arktype({
+  fileName: 'string',
+});
+
+export const typeRequstBody = arktype({
   fileName: 'string',
   range: arktype({
     start: arktype({

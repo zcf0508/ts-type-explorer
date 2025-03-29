@@ -48,8 +48,10 @@ async function waitForServer(
 function createHonoClientLoader() {
   let client: ReturnType<typeof hc<AppType>> | undefined;
 
-  async function createHonoClient() {
-    if (client && await waitForServer(async () => (await client!.ping.$get()).ok)) {
+  async function createHonoClient(fileName: string) {
+    if (client && await waitForServer(async () => (await client!.ping.$post({
+      json: { fileName },
+    })).ok)) {
       return client;
     }
     const port = await getPorts();
@@ -58,7 +60,9 @@ function createHonoClientLoader() {
 
     await startTsPlugin(port);
 
-    if (await waitForServer(async () => (await _client.ping.$get()).ok)) {
+    if (await waitForServer(async () => (await _client.ping.$post({
+      json: { fileName },
+    })).ok)) {
       client = _client;
       return _client;
     }
@@ -166,7 +170,7 @@ export async function getTypeTreeAtRange(
 
   register();
 
-  const client = await getHonoClient();
+  const client = await getHonoClient(fileName);
 
   const res = await client.type.$post({
     json: {
