@@ -1,7 +1,6 @@
 import { createTsContext } from "../lib/tsUtil"
 import path from "path"
 import { getTypeInfoAtRange } from "@ts-type-explorer/api"
-import assert from "assert"
 
 const fileName = path.join(__dirname, "vscodePosition.ts")
 

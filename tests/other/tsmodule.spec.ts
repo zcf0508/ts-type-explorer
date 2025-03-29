@@ -9,12 +9,14 @@ describe("tsmodule.ts", () => {
         const ctx = createTsContext(fileName)
         const pos = { line: 0, character: 24 }
 
-        getTypeInfoAtRange(ctx, {
+        const typeInfo = getTypeInfoAtRange(ctx, {
             fileName,
             range: {
                 start: pos,
                 end: pos,
             },
         })
+
+        assert(typeInfo)
     })
 })

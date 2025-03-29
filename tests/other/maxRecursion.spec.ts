@@ -1,5 +1,4 @@
 import { getTypeInfoOfNode } from "@ts-type-explorer/api"
-import assert from "assert"
 import path from "path"
 import { createTsContext } from "../lib/tsUtil"
 

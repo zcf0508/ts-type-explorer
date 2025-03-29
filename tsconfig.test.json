@@ -5,7 +5,8 @@
     "moduleResolution": "node",
     "types": [
       "vitest/globals"
-    ]
+    ],
+    "allowSyntheticDefaultImports": true
   },
   "include": ["tests/**/*.spec.ts"]
 }
