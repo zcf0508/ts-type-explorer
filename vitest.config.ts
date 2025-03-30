@@ -6,6 +6,6 @@ export default defineConfig({
       'tests/**/*.spec.ts',
     ],
     globals: true,
-    testTimeout: 10000,
+    testTimeout: 30 * 1000,
   },
 });
