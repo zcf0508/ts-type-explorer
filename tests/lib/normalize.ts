@@ -11,7 +11,7 @@ import { rootPath } from "./files"
 import { asyncMap } from "./testUtil"
 
 function normalizeFilePath(filePath: string) {
-    return path.relative(rootPath, filePath)
+    return path.normalize(path.relative(rootPath, filePath))
 }
 
 export function normalizeTypeTree(
