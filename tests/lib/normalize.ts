@@ -56,6 +56,14 @@ export function normalizeTypeTree(
         }
     })
 
+    try{
+      const symbolName = JSON.parse(typeTree.symbolMeta?.name?.replaceAll('\\\\','\\'))
+
+      if(symbolName && symbolName.startsWith(rootPath)){
+        typeTree.symbolMeta.name = `"${normalizeFilePath(symbolName)}"`
+      }
+    } catch(e) {}
+
     return typeTree
 }
 
@@ -99,6 +107,14 @@ export async function normalizeLocalizedTypeTree(
                 normalizeLocalizedTypeTree(c, resolver, context)
             )
     )
+
+    try{
+      const symbolName = JSON.parse(typeTree.symbol?.name?.replaceAll('\\\\','\\'))
+
+      if(symbolName && symbolName.startsWith(rootPath)){
+        typeTree.symbol.name = `"${normalizeFilePath(symbolName)}"`
+      }
+    } catch(e) {}
 
     return {
         ...typeTree,
