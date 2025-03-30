@@ -93,6 +93,9 @@ importers:
       mocha:
         specifier: ^10.0.0
         version: 10.8.2
+      tsx:
+        specifier: ^4.19.3
+        version: 4.19.3
       typescript:
         specifier: 'catalog:'
         version: 5.3.3
