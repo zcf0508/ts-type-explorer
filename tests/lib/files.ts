@@ -1,10 +1,9 @@
 import path from "path"
+import { fileURLToPath } from "url"
 
 // ESM
-// export const filename = fileURLToPath(import.meta.url)
-// export const dirname = path.dirname(filename)
-
-export const dirname = __dirname
+export const filename = fileURLToPath(import.meta.url)
+export const dirname = path.dirname(filename)
 
 export const rootPath = path.join(dirname, "../")
 export const testCasePath = path.join(dirname, "../cases")
