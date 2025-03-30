@@ -1,3 +1,3 @@
-import * as vscode from "vscode"
+import type * as vscode from 'vscode';
 
-type _ = vscode.Position
+type _ = vscode.Position;

@@ -7,7 +7,8 @@ export default antfu(
   },
   {
     ignores: [
-      'tests/**',
+      'tests/baselines/**',
+      'tests/cases/**',
       '**/out/**',
       '**/dist/**',
       '**/scripts/**/*.js',

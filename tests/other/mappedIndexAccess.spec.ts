@@ -1,44 +1,42 @@
-import { getTypeInfoAtRange } from "@ts-type-explorer/api"
-import assert from "assert"
-import path from "path"
-import { createTsContext } from "../lib/tsUtil"
+import assert from 'node:assert';
+import path from 'node:path';
+import { getTypeInfoAtRange } from '@ts-type-explorer/api';
+import { createTsContext } from '../lib/tsUtil';
 
 const pos = {
-    line: 13,
-    character: 6
-}
+  line: 13,
+  character: 6,
+};
 
-describe("mappedIndexAccess.ts", () => {
-    it("has proper symbol resolution through mapped type", () => {
-        const fileName = path.join(__dirname, "../cases/mappedIndexAccess.ts")
-        const ctx = createTsContext(fileName)
-    
-        const sourceFile = ctx.program.getSourceFile(fileName)
-        assert(sourceFile)
+describe('mappedIndexAccess.ts', () => {
+  it('has proper symbol resolution through mapped type', () => {
+    const fileName = path.join(__dirname, '../cases/mappedIndexAccess.ts');
+    const ctx = createTsContext(fileName);
 
-        const parentInfo = getTypeInfoAtRange(
-            ctx,
-            {
-                fileName,
-                range: {
-                    start: pos,
-                    end: pos,
-                },
-            },
-            { referenceDefinedTypes: true }
-        )
+    const sourceFile = ctx.program.getSourceFile(fileName);
+    assert(sourceFile);
 
-        assert(parentInfo)
-        assert(parentInfo.kind === "object")
+    const parentInfo = getTypeInfoAtRange(
+      ctx,
+      {
+        fileName,
+        range: {
+          start: pos,
+          end: pos,
+        },
+      },
+      { referenceDefinedTypes: true },
+    );
 
-        const typeInfo = parentInfo.properties[0]
+    assert(parentInfo);
+    assert(parentInfo.kind === 'object');
 
-        debugger
+    const typeInfo = parentInfo.properties[0];
 
-        assert(typeInfo)
-        assert.strictEqual(typeInfo.kind, "primitive")
-        assert(typeInfo.kind === "primitive")
+    assert(typeInfo);
+    assert.strictEqual(typeInfo.kind, 'primitive');
+    assert(typeInfo.kind === 'primitive');
 
-        assert.strictEqual(typeInfo.primitive, "string")
-    })
-})
+    assert.strictEqual(typeInfo.primitive, 'string');
+  });
+});

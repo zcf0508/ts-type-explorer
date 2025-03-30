@@ -1,9 +1,7 @@
-/* eslint-disable @typescript-eslint/no-misused-promises */
-
-import { clearLocalBaselines, generateBaselineTests } from "./baselines"
+import { clearLocalBaselines, generateBaselineTests } from './baselines';
 
 beforeAll(async () => {
-    await clearLocalBaselines()
-})
+  await clearLocalBaselines();
+});
 
-describe("baselines", generateBaselineTests)
+describe('baselines', generateBaselineTests);

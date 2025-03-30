@@ -1,7 +1,7 @@
-import { getSymbolOrTypeOfNode, getSymbolType } from "@ts-type-explorer/api"
-import { createTsContext } from "../lib/tsUtil"
-import path from "path"
-import assert from "assert"
+import assert from 'node:assert';
+import path from 'node:path';
+import { getSymbolOrTypeOfNode, getSymbolType } from '@ts-type-explorer/api';
+import { createTsContext } from '../lib/tsUtil';
 
 // describe("symbols of symbols", () => {
 //     it("test", () => {
@@ -10,7 +10,7 @@ import assert from "assert"
 //         )
 
 //         const { sourceFile, typeChecker } = ctx
-        
+
 //         const node = sourceFile
 //             .getChildren()[0]
 //             .getChildren()[0]

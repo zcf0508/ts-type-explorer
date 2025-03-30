@@ -1,22 +1,22 @@
-import { getTypeInfoAtRange } from "@ts-type-explorer/api"
-import { createTsContext } from "../lib/tsUtil"
-import path from "path"
+import path from 'node:path';
+import { getTypeInfoAtRange } from '@ts-type-explorer/api';
+import { createTsContext } from '../lib/tsUtil';
 
-const fileName = path.join(__dirname, "./tsmodule.ts")
+const fileName = path.join(__dirname, './tsmodule.ts');
 
-describe("tsmodule.ts", () => {
-    it("can get module information", () => {
-        const ctx = createTsContext(fileName)
-        const pos = { line: 0, character: 24 }
+describe('tsmodule.ts', () => {
+  it('can get module information', () => {
+    const ctx = createTsContext(fileName);
+    const pos = { line: 0, character: 24 };
 
-        const typeInfo = getTypeInfoAtRange(ctx, {
-            fileName,
-            range: {
-                start: pos,
-                end: pos,
-            },
-        })
+    const typeInfo = getTypeInfoAtRange(ctx, {
+      fileName,
+      range: {
+        start: pos,
+        end: pos,
+      },
+    });
 
-        assert(typeInfo)
-    })
-})
+    assert(typeInfo);
+  });
+});

@@ -1,8 +1,8 @@
-import React from "react"
-import { Button } from "@mui/material"
+import { Button } from '@mui/material';
+import React from 'react';
 
 export const Component: React.FunctionComponent = () => (
-    <Button onClick={(event) => { }}>
-        Button
-    </Button>
-)
+  <Button onClick={(event) => { }}>
+    Button
+  </Button>
+);
