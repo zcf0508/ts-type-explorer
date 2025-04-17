@@ -8,7 +8,7 @@ type VuePrograme = ts.Program & {
   __vue__?: { language: Language }
 };
 
-let tsPrograme: VuePrograme | undefined;
+const tsProgrameMap: Map<string, VuePrograme> = new Map();
 
 function getMappingOffset(
   language: Language,
@@ -28,15 +28,21 @@ export function getPositionOfLineAndCharacterForVue(
 ): [number, (startPos: number) => ts.LineAndCharacter | undefined] {
   const fileName = location.fileName;
 
-  tsPrograme = ctx.program;
+  const tsPrograme = tsProgrameMap.get(ctx.projectName) as VuePrograme | undefined;
+
+  const program = tsPrograme ?? ctx.program as VuePrograme;
 
   let fixLocation = (startPos: number): ts.LineAndCharacter | undefined => undefined;
 
-  if (!tsPrograme?.__vue__) {
+  if (!program?.__vue__) {
+    console.log('Vue language not found');
     return [startPos, fixLocation] as const;
   }
+  else if (!tsPrograme) {
+    tsProgrameMap.set(ctx.projectName, program);
+  }
 
-  const language = tsPrograme.__vue__!.language;
+  const language = tsPrograme!.__vue__!.language;
   if (language?.scripts) {
     const vFile = language.scripts.get(fileName);
     const serviceScript

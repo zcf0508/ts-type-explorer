@@ -20,6 +20,7 @@ const init: ts.server.PluginModuleFactory = (modules) => {
           const typeChecker = program.getTypeChecker();
 
           return {
+            projectName: info.project.getProjectName(),
             program,
             typeChecker,
             ts: modules.typescript,

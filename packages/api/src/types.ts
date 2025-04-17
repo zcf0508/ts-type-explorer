@@ -42,6 +42,7 @@ export type CustomTypeScriptResponseBody<
 > = Extract<CustomTypescriptResponseBodyData, { id: Id }>;
 
 export interface TypescriptContext {
+  projectName: string
   program: ts.Program
   typeChecker: ts.TypeChecker
   ts: typeof import('typescript/lib/tsserverlibrary')
