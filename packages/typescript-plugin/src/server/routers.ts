@@ -9,7 +9,6 @@ const app = new Hono()
   .use(logger())
   .post('/ping', arktypeValidator('json', pingRequstBody), (c) => {
     const { fileName } = c.req.valid('json');
-    console.log('ping', fileName);
     if (!getFileContext(fileName)) {
       return c.json({
         error: 'Context not initialized',
@@ -20,6 +19,8 @@ const app = new Hono()
   })
   .post('/type', arktypeValidator('json', typeRequstBody), async (c) => {
     const { fileName, range, maxDepth } = c.req.valid('json');
+
+    // console.log(`fileName: ${fileName}, range: ${JSON.stringify(range)}`);
 
     const context = getFileContext(fileName);
 
@@ -40,6 +41,8 @@ const app = new Hono()
         maxDepth,
       },
     );
+
+    // console.log(JSON.stringify(data, null, 2));
 
     return c.json({
       data,
