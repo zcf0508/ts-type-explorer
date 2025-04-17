@@ -1,22 +1,7 @@
-/* eslint-disable import/no-extraneous-dependencies */
 import type { Language } from '@volar/language-core';
 import type { TypeScriptServiceScript } from '@volar/typescript';
-import type {
-  VueCompilerOptions,
-} from '@vue/language-core';
 import type * as ts from 'typescript/lib/tsserverlibrary';
 import type { SourceFileLocation, TypescriptContext } from './types';
-import {
-  proxyCreateProgram,
-
-} from '@volar/typescript';
-import {
-  createParsedCommandLine,
-  createVueLanguagePlugin,
-  resolveVueCompilerOptions,
-} from '@vue/language-core';
-
-const windowsPathReg = /\\/g;
 
 type VuePrograme = ts.Program & {
   // https://github.com/vuejs/language-tools/blob/v2.0.16/packages/typescript-plugin/index.ts#L75
@@ -43,57 +28,15 @@ export function getPositionOfLineAndCharacterForVue(
 ): [number, (startPos: number) => ts.LineAndCharacter | undefined] {
   const fileName = location.fileName;
 
-  const compilerOptions = {
-    ...ctx.program.getCompilerOptions(),
-    rootDir: ctx.program.getCurrentDirectory(),
-    declaration: true,
-    emitDeclarationOnly: true,
-    allowNonTsExtensions: true,
-  };
-
-  const options: ts.CreateProgramOptions = {
-    host: ctx.ts.createCompilerHost(compilerOptions),
-    rootNames: ctx.program.getRootFileNames(),
-    options: compilerOptions,
-    oldProgram: ctx.program,
-  };
-
-  let vueOptions: VueCompilerOptions;
-  const createProgram = proxyCreateProgram(
-    ctx.ts,
-    ctx.ts.createProgram,
-    (ts, options) => {
-      const { configFilePath } = options.options;
-      vueOptions
-                = typeof configFilePath === 'string'
-          ? createParsedCommandLine(
-            ts,
-            ts.sys,
-            configFilePath.replace(windowsPathReg, '/'),
-          ).vueOptions
-          : resolveVueCompilerOptions({
-            extensions: ['.vue', '.cext'],
-          });
-      const vueLanguagePlugin = createVueLanguagePlugin<string>(
-        ts,
-        options.options,
-        vueOptions,
-        id => id,
-      );
-      return [vueLanguagePlugin];
-    },
-  );
-
   tsPrograme = ctx.program;
-
-  if (!tsPrograme?.__vue__) {
-    console.log('create vue program');
-    tsPrograme = createProgram(options) as VuePrograme;
-  }
 
   let fixLocation = (startPos: number): ts.LineAndCharacter | undefined => undefined;
 
-  const language = tsPrograme.__vue__?.language;
+  if (!tsPrograme?.__vue__) {
+    return [startPos, fixLocation] as const;
+  }
+
+  const language = tsPrograme.__vue__!.language;
   if (language?.scripts) {
     const vFile = language.scripts.get(fileName);
     const serviceScript
