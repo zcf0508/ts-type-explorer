@@ -3,7 +3,12 @@ import type { TypeScriptServiceScript } from '@volar/typescript';
 import type * as ts from 'typescript/lib/tsserverlibrary';
 import type { SourceFileLocation, TypescriptContext } from './types';
 
-type VuePrograme = ts.Program & {
+type VueProject = ts.server.Project & {
+  // https://github.com/vuejs/language-tools/blob/v2.0.16/packages/typescript-plugin/index.ts#L75
+  __vue__?: { language: Language }
+};
+
+type VueProgram = ts.Program & {
   // https://github.com/vuejs/language-tools/blob/v2.0.16/packages/typescript-plugin/index.ts#L75
   __vue__?: { language: Language }
 };
@@ -26,16 +31,17 @@ export function getPositionOfLineAndCharacterForVue(
 ): [number, (startPos: number) => ts.LineAndCharacter | undefined] {
   const fileName = location.fileName;
 
-  const tsProgram = ctx.program as VuePrograme;
+  const project = ctx.project as VueProject;
+  const program = ctx.program as VueProgram;
 
   let fixLocation = (startPos: number): ts.LineAndCharacter | undefined => undefined;
 
-  if (!tsProgram?.__vue__) {
+  if (!project?.__vue__ && !program?.__vue__) {
     console.log('Vue language not found');
     return [startPos, fixLocation] as const;
   }
 
-  const language = tsProgram!.__vue__!.language;
+  const language = (project.__vue__?.language || program.__vue__?.language)!;
   if (language?.scripts) {
     const vFile = language.scripts.get(fileName);
     const serviceScript
