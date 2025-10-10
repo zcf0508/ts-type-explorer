@@ -7,29 +7,26 @@ import { start } from './server';
 const init: ts.server.PluginModuleFactory = (modules) => {
   return {
     create: (info: ts.server.PluginCreateInfo) => {
-      function getContext(_info: ts.server.PluginCreateInfo): () => (TypescriptContext | undefined) {
-        const info = _info;
-        return () => {
+      function getContext(): TypescriptContext | undefined {
         // @ts-expect-error - ts internal
-          const program = info.project.program as ts.Program | undefined;
+        const program = info.project.program as ts.Program | undefined;
 
-          if (!program) {
-            return undefined;
-          }
+        if (!program) {
+          return undefined;
+        }
 
-          const typeChecker = program.getTypeChecker();
+        const typeChecker = program.getTypeChecker();
 
-          return {
-            project: info.project,
-            projectName: info.project.getProjectName(),
-            program,
-            typeChecker,
-            ts: modules.typescript,
-          };
+        return {
+          project: info.project,
+          projectName: info.project.getProjectName(),
+          program,
+          typeChecker,
+          ts: modules.typescript,
         };
       }
 
-      contextMap.set(info.project.getProjectName(), getContext(info));
+      contextMap.set(info.project.getProjectName(), getContext);
 
       return info.languageService;
     },

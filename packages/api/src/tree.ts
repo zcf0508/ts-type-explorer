@@ -66,7 +66,7 @@ import {
   isTupleType,
   narrowDeclarationForLocation,
 } from './util';
-import { getPositionOfLineAndCharacterForVue } from './vue';
+import { getPositionOfLineAndCharacterForVue, getVueLanguage } from './vue';
 
 const maxDepthExceeded: TypeInfo = { kind: 'max_depth', id: getEmptyTypeId() };
 
@@ -1098,6 +1098,7 @@ export function getTypeInfoAtRange(
       { ...ctx, sourceFile },
       location,
       startPos,
+      getVueLanguage(ctx.project) || getVueLanguage(ctx.program),
     );
     startPos = _startPos;
     fixLocation = _fixLocation;

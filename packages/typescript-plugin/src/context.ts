@@ -4,8 +4,8 @@ import { normalize } from 'node:path';
 export const contextMap = new Map<string, () => (TypescriptContext | undefined)>();
 
 export function getFileContext(filePath: string): TypescriptContext | undefined {
-  for (const state of contextMap.values()) {
-    const context = state();
+  for (const getContext of contextMap.values()) {
+    const context = getContext();
     const { program } = context ?? {};
     if (
       program?.getSourceFile(normalize(filePath))

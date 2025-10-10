@@ -3,16 +3,6 @@ import type { TypeScriptServiceScript } from '@volar/typescript';
 import type * as ts from 'typescript/lib/tsserverlibrary';
 import type { SourceFileLocation, TypescriptContext } from './types';
 
-type VueProject = ts.server.Project & {
-  // https://github.com/vuejs/language-tools/blob/v2.0.16/packages/typescript-plugin/index.ts#L75
-  __vue__?: { language: Language }
-};
-
-type VueProgram = ts.Program & {
-  // https://github.com/vuejs/language-tools/blob/v2.0.16/packages/typescript-plugin/index.ts#L75
-  __vue__?: { language: Language }
-};
-
 function getMappingOffset(
   language: Language,
   serviceScript: TypeScriptServiceScript,
@@ -24,24 +14,30 @@ function getMappingOffset(
   return sourceScript.snapshot.getLength();
 }
 
+export function getVueLanguage(projectOrProgram: ts.Program | ts.server.Project): Language | undefined {
+  // https://github.com/vuejs/language-tools/blob/v2.0.16/packages/typescript-plugin/index.ts#L75
+  // https://github.com/vuejs/language-tools/blob/v3.1.1/packages/typescript-plugin/index.ts#L39
+  if ('__vue__' in projectOrProgram) {
+    return (projectOrProgram.__vue__ as { language: Language }).language;
+  }
+  return undefined;
+}
+
 export function getPositionOfLineAndCharacterForVue(
   ctx: TypescriptContext & { sourceFile: ts.SourceFile },
   location: SourceFileLocation,
   startPos = -1,
+  language: Language | undefined = undefined,
 ): [number, (startPos: number) => ts.LineAndCharacter | undefined] {
   const fileName = location.fileName;
 
-  const project = ctx.project as VueProject;
-  const program = ctx.program as VueProgram;
-
   let fixLocation = (startPos: number): ts.LineAndCharacter | undefined => undefined;
 
-  if (!project?.__vue__ && !program?.__vue__) {
+  if (!language) {
     console.log('Vue language not found');
     return [startPos, fixLocation] as const;
   }
 
-  const language = (project.__vue__?.language || program.__vue__?.language)!;
   if (language?.scripts) {
     const vFile = language.scripts.get(fileName);
     const serviceScript
